@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_frame_layout);
         if (loginFragment == null) {
-            loginFragment = createAddressFragment("This is my title");
+            loginFragment = createLoginFragment("This is my title");
             System.out.println("Inside condition");
             System.out.println("fragment: " + loginFragment);
             fragmentManager.beginTransaction()
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private LoginFragment createAddressFragment(String title) {
+    private LoginFragment createLoginFragment(String title) {
         LoginFragment fragment = new LoginFragment();
 
         Bundle args = new Bundle();

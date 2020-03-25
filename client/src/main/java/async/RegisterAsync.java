@@ -10,29 +10,25 @@ import _result.RegisterResult;
 import client.HttpClient;
 
 public class RegisterAsync extends AsyncTask<RegisterRequest, Integer, RegisterResult> {
-    private RegisterResult result;
-    private Fragment fragment;
+    private Fragment parentFragment;
 
-    public RegisterAsync(Fragment fragment) {
-        this.fragment = fragment;
+    public RegisterAsync(Fragment parentFragment) {
+        this.parentFragment = parentFragment;
     }
 
     @Override
     protected RegisterResult doInBackground(RegisterRequest... registerRequests) {
-        try {
-            HttpClient client = HttpClient.getInstance();
-            result = client.register(registerRequests[0]);
-            return result;
-        } catch (Exception e) {
-            result = new RegisterResult("Failed to Register");
-            return result;
-        }
+        HttpClient client = HttpClient.getInstance();
+        return client.register(registerRequests[0]);
     }
 
     @Override
-    protected void onPostExecute(RegisterResult r) {
-        if (!result.isSuccess()) {
-            Toast toast = Toast.makeText(fragment.getContext(), result.getMessage(), Toast.LENGTH_SHORT);
+    protected void onPostExecute(RegisterResult result) {
+        if (result.isSuccess()) {
+            // Call async to get all related family data
+            new FetchAllPersonsAsync(parentFragment).execute();
+        } else {
+            Toast toast = Toast.makeText(parentFragment.getContext(), result.getMessage(), Toast.LENGTH_SHORT);
             toast.show();
         }
     }

@@ -5,34 +5,34 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import _request.AllPersonsRequest;
 import _request.LoginRequest;
 import _result.LoginResult;
+import client.DataCache;
 import client.HttpClient;
 
 public class LoginAsync extends AsyncTask<LoginRequest, Integer, LoginResult> {
-    private LoginResult result;
-    private Fragment fragment;
+    private Fragment parentFragment;
 
-    public LoginAsync(Fragment fragment) {
-        this.fragment = fragment;
+    public LoginAsync(Fragment parentFragment) {
+        this.parentFragment = parentFragment;
     }
 
     @Override
     protected LoginResult doInBackground(LoginRequest... loginRequests) {
-        try {
-            HttpClient client = HttpClient.getInstance();
-            result = client.login(loginRequests[0]);
-            return result;
-        } catch (Exception e) {
-            result = new LoginResult("Failed to Sign In");
-            return result;
-        }
+        HttpClient client = HttpClient.getInstance();
+        return client.login(loginRequests[0]);
     }
 
     @Override
-    protected void onPostExecute(LoginResult r) {
-        if (!result.isSuccess()) {
-            Toast toast = Toast.makeText(fragment.getContext(), result.getMessage(), Toast.LENGTH_SHORT);
+    protected void onPostExecute(LoginResult result) {
+        if (result.isSuccess()) {
+            // Call async to get all related family data
+            DataCache dataCache = DataCache.getInstance();
+            AllPersonsRequest request = new AllPersonsRequest(dataCache.getUserName(), dataCache.getAuthToken());
+            new FetchAllPersonsAsync(parentFragment).execute(request);
+        } else {
+            Toast toast = Toast.makeText(parentFragment.getContext(), result.getMessage(), Toast.LENGTH_SHORT);
             toast.show();
         }
     }

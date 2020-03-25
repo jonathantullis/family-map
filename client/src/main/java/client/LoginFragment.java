@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import _request.LoginRequest;
 import _request.RegisterRequest;
-import _result.LoginResult;
+import async.FetchAllPersonsAsync;
 import async.LoginAsync;
 import async.RegisterAsync;
 
@@ -90,9 +90,6 @@ public class LoginFragment extends Fragment {
         client = HttpClient.getInstance(getServerHost(), getServerPort());
         LoginRequest request = getLoginRequest();
         new LoginAsync(this).execute(request);
-//        System.out.println("Login Request");
-//        System.out.println(request.getUsername());
-//        System.out.println(request.getPassword());
     }
 
     private LoginRequest getLoginRequest() {

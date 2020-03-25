@@ -10,12 +10,15 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import _model.AuthToken;
 import _request.*;
 import _result.*;
 
 public class HttpClient {
+    private DataCache dataCache = DataCache.getInstance();
     private String serverHost;
     private String serverPort;
+
 
     /************  Singleton  **************/
     private static HttpClient instance;
@@ -58,17 +61,19 @@ public class HttpClient {
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 json = readString(respBody);
-                return gson.fromJson(json, RegisterResult.class);
-            } else {
-                // The response code indicated an error
-                return new RegisterResult("Failed to Register");
+                RegisterResult result = gson.fromJson(json, RegisterResult.class);
+                // Save user data and authToken for current session
+                this.dataCache.setAuthToken(result.getAuthToken());
+                this.dataCache.setUserName(registerRequest.getUser().getUserName());
+                this.dataCache.setUserPersonId(result.getPersonID());
+                return result;
             }
         } catch (IOException e) {
-            System.out.println("There was an error");
             e.printStackTrace();
         }
 
-        return null;
+        // The response code indicated an error
+        return new RegisterResult("Failed to Register");
     }
 
     public LoginResult login(LoginRequest loginRequest) {
@@ -78,7 +83,6 @@ public class HttpClient {
 
             http.setRequestMethod("POST");
             http.setDoOutput(true);	// There is a request body
-//            http.addRequestProperty("Authorization", "asdlfkjijew");
             http.addRequestProperty("Accept", "application/json"); // We want json
 
             http.connect();
@@ -94,19 +98,48 @@ public class HttpClient {
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream respBody = http.getInputStream();
                 json = readString(respBody);
-                return gson.fromJson(json, LoginResult.class);
-            } else {
-                // The response code indicated an error
-                return new LoginResult("Failed to Sign In");
+                LoginResult result = gson.fromJson(json, LoginResult.class);
+                // Save user data and authToken for current session
+                this.dataCache.setAuthToken(result.getAuthToken());
+                this.dataCache.setUserName(loginRequest.getUserName());
+                this.dataCache.setUserPersonId(result.getPersonID());
+                return result;
             }
         } catch (IOException e) {
-            System.out.println("There was an error");
             e.printStackTrace();
         }
 
-        return null;
+        // The response code indicated an error
+        return new LoginResult("Failed to Sign In");
     }
 
+    public AllPersonsResult fetchAllPersons(AllPersonsRequest allPersonsRequest) {
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/person");
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+
+            http.setRequestMethod("GET");
+            http.setDoOutput(false);	// There is NO request body
+            http.addRequestProperty("Authorization", dataCache.getAuthToken());
+            http.addRequestProperty("Accept", "application/json"); // We want json
+
+            http.connect();
+
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Gson gson = new Gson();
+                InputStream respBody = http.getInputStream();
+                String json = readString(respBody);
+                System.out.println("Successfully fetched related persons");
+                this.dataCache.setAllPersonsResult(gson.fromJson(json, AllPersonsResult.class));
+                return dataCache.getAllPersonsResult();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // The response code indicated an error
+        return new AllPersonsResult("Error fetching all related persons");
+    }
 
     /*
 		The writeString method shows how to write a String to an OutputStream.
