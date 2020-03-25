@@ -11,7 +11,7 @@
         android:id="@+id/row_1"
         android:layout_height="50dp">
         <TextView
-            android:text="Server Host:"
+            android:text="@string/input_label_server_host"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -21,7 +21,7 @@
             android:id="@+id/server_host"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:inputType="numberDecimal"/>
+            android:inputType="text"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -29,7 +29,7 @@
         android:layout_below="@id/row_1"
         android:id="@+id/row_2">
         <TextView
-            android:text="Server Port:"
+            android:text="@string/input_label_server_port"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -47,7 +47,7 @@
         android:layout_below="@id/row_2"
         android:id="@+id/row_3">
         <TextView
-            android:text="User Name:"
+            android:text="@string/input_label_user_name"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -57,7 +57,8 @@
             android:id="@+id/user_name"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:autofillHints="AUTOFILL_HINT_USERNAME" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -65,7 +66,7 @@
         android:layout_below="@id/row_3"
         android:id="@+id/row_4">
         <TextView
-            android:text="Password:"
+            android:text="@string/input_label_password"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -75,7 +76,8 @@
             android:id="@+id/password"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:autofillHints="AUTOFILL_HINT_PASSWORD" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -83,7 +85,7 @@
         android:layout_below="@id/row_4"
         android:id="@+id/row_5">
         <TextView
-            android:text="First Name:"
+            android:text="@string/input_label_first_name"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -93,7 +95,8 @@
             android:id="@+id/first_Name"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:autofillHints="AUTOFILL_HINT_NAME_GIVEN" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -101,7 +104,7 @@
         android:layout_below="@id/row_5"
         android:id="@+id/row_6">
         <TextView
-            android:text="Last Name:"
+            android:text="@string/input_label_last_name"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -111,7 +114,8 @@
             android:id="@+id/last_Name"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:autofillHints="AUTOFILL_HINT_NAME_FAMILY" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -119,7 +123,7 @@
         android:layout_below="@id/row_6"
         android:id="@+id/row_7">
         <TextView
-            android:text="Email:"
+            android:text="@string/input_label_email"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -129,7 +133,8 @@
             android:id="@+id/email"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textEmailAddress"
+            android:autofillHints="AUTOFILL_HINT_EMAIL" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -137,7 +142,7 @@
         android:layout_below="@id/row_7"
         android:id="@+id/row_8">
         <TextView
-            android:text="Gender:"
+            android:text="@string/input_label_gender"
             android:layout_height="fill_parent"
             android:layout_width="85dp"
             android:gravity="bottom|end"
@@ -153,11 +158,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:text="Male"/>
+                android:text="@string/radio_label_male"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Female"/>
+                android:text="@string/radio_label_female"/>
         </RadioGroup>
     </LinearLayout>
     <LinearLayout
@@ -168,14 +173,14 @@
         android:gravity="center"
         android:id="@+id/row_9">
         <Button
-            android:text="SIGN IN"
+            android:text="@string/button_label_sign_in"
             android:id="@+id/sign_in_button"
             android:layout_height="fill_parent"
             android:layout_width="90dp"
             android:layout_marginHorizontal="5dp"
             tools:ignore="ButtonStyle" />
         <Button
-            android:text="REGISTER"
+            android:text="@string/button_label_register"
             android:id="@+id/register_button"
             android:layout_height="fill_parent"
             android:layout_width="90dp"

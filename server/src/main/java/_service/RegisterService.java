@@ -69,6 +69,7 @@ public class RegisterService {
             logger.severe("Error generating ancestor data during user registration");
         }
         result = new RegisterResult(authToken.getUserName(), authToken.getToken(), r.getUser().getPersonID());
+        result.setMessage("Successfully Registered");
         return result;
     }
 }

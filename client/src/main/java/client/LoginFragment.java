@@ -1,4 +1,4 @@
-package com.example.client;
+package client;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,19 +15,22 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.example.client.R;
+
 import java.util.ArrayList;
 
 import _request.LoginRequest;
 import _request.RegisterRequest;
+import _result.LoginResult;
+import async.LoginAsync;
+import async.RegisterAsync;
 
 public class LoginFragment extends Fragment {
 
-    public static final String ARG_TITLE = "title";
-
-    private String serverHost;
-    private String serverPort;
+    public static final String ARG_TITLE = "Title";
 
     private View view;
+    private HttpClient client;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +87,9 @@ public class LoginFragment extends Fragment {
     }
 
     private void login() {
+        client = HttpClient.getInstance(getServerHost(), getServerPort());
         LoginRequest request = getLoginRequest();
+        new LoginAsync(this).execute(request);
 //        System.out.println("Login Request");
 //        System.out.println(request.getUsername());
 //        System.out.println(request.getPassword());
@@ -110,14 +115,9 @@ public class LoginFragment extends Fragment {
     }
 
     private void register() {
+        client = HttpClient.getInstance(getServerHost(), getServerPort());
         RegisterRequest request = getRegisterRequest();
-//        System.out.println("Register Request");
-//        System.out.println(request.getUser().getUserName());
-//        System.out.println(request.getUser().getPassword());
-//        System.out.println(request.getUser().getFirstName());
-//        System.out.println(request.getUser().getLastName());
-//        System.out.println(request.getUser().getEmail());
-//        System.out.println(request.getUser().getGender());
+        new RegisterAsync(this).execute(request);
     }
 
     private RegisterRequest getRegisterRequest() {
@@ -141,25 +141,25 @@ public class LoginFragment extends Fragment {
         
         final int REQUIRED_LENGTH = 3;
 
-        boolean enableRegister = serverHostLength >= REQUIRED_LENGTH &&
-                                serverPortLength >= REQUIRED_LENGTH &&
-                                userNameLength >= REQUIRED_LENGTH &&
-                                passwordLength >= REQUIRED_LENGTH &&
-                                firstNameLength >= REQUIRED_LENGTH &&
-                                lastNameLength >= REQUIRED_LENGTH &&
-                                emailLength >= REQUIRED_LENGTH &&
-                                genderLength > 0;
-
         boolean enableLogin = serverHostLength >= REQUIRED_LENGTH &&
                             serverPortLength >= REQUIRED_LENGTH &&
                             userNameLength >= REQUIRED_LENGTH &&
                             passwordLength >= REQUIRED_LENGTH;
 
-        Button registerButton = view.findViewById(R.id.register_button);
-        registerButton.setEnabled(enableRegister);
-
         Button signInButton = view.findViewById(R.id.sign_in_button);
         signInButton.setEnabled(enableLogin);
+
+        boolean enableRegister = serverHostLength >= REQUIRED_LENGTH &&
+                serverPortLength >= REQUIRED_LENGTH &&
+                userNameLength >= REQUIRED_LENGTH &&
+                passwordLength >= REQUIRED_LENGTH &&
+                firstNameLength >= REQUIRED_LENGTH &&
+                lastNameLength >= REQUIRED_LENGTH &&
+                emailLength >= REQUIRED_LENGTH &&
+                genderLength > 0;
+
+        Button registerButton = view.findViewById(R.id.register_button);
+        registerButton.setEnabled(enableRegister);
     }
 
     private String getServerHost() {
@@ -211,6 +211,6 @@ public class LoginFragment extends Fragment {
             gender = r.getText().toString().substring(0, 1);
         }
 
-        return gender;
+        return gender.toLowerCase();
     }
 }

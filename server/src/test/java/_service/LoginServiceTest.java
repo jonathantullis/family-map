@@ -58,7 +58,7 @@ public class LoginServiceTest {
 
         assertNotNull(foundToken);
         assertEquals(foundToken.getToken(), result.getAuthToken());
-        assertEquals(foundToken.getUserName(), request.getUsername());
+        assertEquals(foundToken.getUserName(), request.getUserName());
     }
 
     @Test

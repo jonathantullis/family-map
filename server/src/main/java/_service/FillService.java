@@ -43,8 +43,8 @@ public class FillService {
         try {
             db = new Database();
             conn = db.getConnection();
-            if (userExists(r.getUsername())) {
-                deleteAssociatedData(r.getUsername());
+            if (userExists(r.getUserName())) {
+                deleteAssociatedData(r.getUserName());
             } else {
                 db.closeConnection(false);
                 return new FillResult(false, "User does not exist");
@@ -53,9 +53,9 @@ public class FillService {
                 db.closeConnection(false);
                 return new FillResult(false, "Invalid number of generations provided.");
             }
-            insertGenerations(r.getUsername(), r.getGenerations());
-            numAddedEvents = numEvents(r.getUsername());
-            numAddedPersons = numPersons(r.getUsername());
+            insertGenerations(r.getUserName(), r.getGenerations());
+            numAddedEvents = numEvents(r.getUserName());
+            numAddedPersons = numPersons(r.getUserName());
             db.closeConnection(true);
         } catch (DataAccessException e) {
             logger.warning("Error occurred while accessing database");

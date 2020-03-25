@@ -37,7 +37,7 @@ public class LoginService {
             Connection conn = db.getConnection();
             UserDAO uDao = new UserDAO(conn);
 
-            User user = uDao.find(r.getUsername());
+            User user = uDao.find(r.getUserName());
 
             if (user != null && user.getPassword().equals(r.getPassword())) {
                 AuthTokenDAO aDao = new AuthTokenDAO(conn);
@@ -45,6 +45,7 @@ public class LoginService {
                 AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), user.getUserName());
                 aDao.insert(authToken);
                 result = new LoginResult(authToken.getUserName(), authToken.getToken(), user.getPersonID());
+                result.setMessage("Successfully Logged In");
             } else {
                 result = new LoginResult("ERROR: Invalid username or password");
             }

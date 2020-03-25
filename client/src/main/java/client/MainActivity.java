@@ -1,10 +1,12 @@
-package com.example.client;
+package client;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+
+import com.example.client.R;
 
 public class MainActivity extends AppCompatActivity {
 

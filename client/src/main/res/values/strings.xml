@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Family Map</string>
+
+    <!-- Login Fragment Input Labels -->
+    <string name="input_label_server_host">Server Host:</string>
+    <string name="input_label_server_port">Server Port:</string>
+    <string name="input_label_user_name">User Name:</string>
+    <string name="input_label_password">Password:</string>
+    <string name="input_label_first_name">First Name:</string>
+    <string name="input_label_last_name">Last Name:</string>
+    <string name="input_label_email">Email:</string>
+    <string name="input_label_gender">Gender:</string>
+    <string name="radio_label_male">Male</string>
+    <string name="radio_label_female">Female</string>
+    <string name="button_label_sign_in">SIGN IN</string>
+    <string name="button_label_register">REGISTER</string>
 </resources>
