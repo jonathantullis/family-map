@@ -5,8 +5,11 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import _request.AllEventsRequest;
+import _request.AllPersonsRequest;
 import _request.RegisterRequest;
 import _result.RegisterResult;
+import client.DataCache;
 import client.HttpClient;
 
 public class RegisterAsync extends AsyncTask<RegisterRequest, Integer, RegisterResult> {
@@ -26,7 +29,11 @@ public class RegisterAsync extends AsyncTask<RegisterRequest, Integer, RegisterR
     protected void onPostExecute(RegisterResult result) {
         if (result.isSuccess()) {
             // Call async to get all related family data
-            new FetchAllPersonsAsync(parentFragment).execute();
+            DataCache dataCache = DataCache.getInstance();
+            AllEventsRequest allEventsRequest = new AllEventsRequest(dataCache.getUserName(), dataCache.getAuthToken());
+            new FetchAllEventsAsync(parentFragment).execute(allEventsRequest);
+            AllPersonsRequest allPersonsRequest = new AllPersonsRequest(dataCache.getUserName(), dataCache.getAuthToken());
+            new FetchAllPersonsAsync(parentFragment).execute(allPersonsRequest);
         } else {
             Toast toast = Toast.makeText(parentFragment.getContext(), result.getMessage(), Toast.LENGTH_SHORT);
             toast.show();

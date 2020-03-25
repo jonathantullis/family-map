@@ -1,6 +1,7 @@
 package client;
 
 import _model.AuthToken;
+import _result.AllEventsResult;
 import _result.AllPersonsResult;
 
 public class DataCache {
@@ -8,6 +9,7 @@ public class DataCache {
     private String userName;
     private String userPersonId;
     private AllPersonsResult allPersonsResult;
+    private AllEventsResult allEventsResult;
 
     /************  Singleton  **************/
     private static DataCache instance;
@@ -54,5 +56,13 @@ public class DataCache {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public AllEventsResult getAllEventsResult() {
+        return allEventsResult;
+    }
+
+    public void setAllEventsResult(AllEventsResult allEventsResult) {
+        this.allEventsResult = allEventsResult;
     }
 }

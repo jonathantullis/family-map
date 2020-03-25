@@ -141,6 +141,34 @@ public class HttpClient {
         return new AllPersonsResult("Error fetching all related persons");
     }
 
+    public AllEventsResult fetchAllEvents(AllEventsRequest allEventsRequest) {
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/event");
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+
+            http.setRequestMethod("GET");
+            http.setDoOutput(false);	// There is NO request body
+            http.addRequestProperty("Authorization", dataCache.getAuthToken());
+            http.addRequestProperty("Accept", "application/json"); // We want json
+
+            http.connect();
+
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Gson gson = new Gson();
+                InputStream respBody = http.getInputStream();
+                String json = readString(respBody);
+                System.out.println("Successfully fetched related events");
+                this.dataCache.setAllEventsResult(gson.fromJson(json, AllEventsResult.class));
+                return dataCache.getAllEventsResult();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // The response code indicated an error
+        return new AllEventsResult("Error fetching all related events");
+    }
+
     /*
 		The writeString method shows how to write a String to an OutputStream.
 	*/
