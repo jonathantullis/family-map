@@ -9,5 +9,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/login_frame_layout"/>
+        android:id="@+id/main_frame_layout"/>
 </RelativeLayout>

@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:id="@+id/row_1"
-        android:layout_height="50dp">
+        android:layout_height="60dp">
         <TextView
             android:text="@string/input_label_server_host"
             android:layout_height="fill_parent"

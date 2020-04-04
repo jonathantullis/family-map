@@ -1,6 +1,5 @@
 package client;
 
-import _model.AuthToken;
 import _result.AllEventsResult;
 import _result.AllPersonsResult;
 

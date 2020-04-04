@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import _request.LoginRequest;
 import _request.RegisterRequest;
-import async.FetchAllPersonsAsync;
 import async.LoginAsync;
 import async.RegisterAsync;
 

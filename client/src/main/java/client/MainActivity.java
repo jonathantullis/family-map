@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.client.R;
@@ -11,6 +12,7 @@ import com.example.client.R;
 public class MainActivity extends AppCompatActivity {
 
     private LoginFragment loginFragment;
+    private MapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,13 +20,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_frame_layout);
+        loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_layout);
         if (loginFragment == null) {
             loginFragment = createLoginFragment("This is my title");
-            System.out.println("Inside condition");
-            System.out.println("fragment: " + loginFragment);
             fragmentManager.beginTransaction()
-                    .add(R.id.login_frame_layout, loginFragment)
+                    .add(R.id.main_frame_layout, loginFragment)
                     .commit();
         }
     }
@@ -39,9 +39,24 @@ public class MainActivity extends AppCompatActivity {
         return fragment;
     }
 
+    private MapFragment createMapFragment() {
+        MapFragment fragment = new MapFragment();
+        return fragment;
+    }
+
+    public void switchToMapFragment () {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        if (mapFragment == null) {
+            mapFragment = createMapFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_frame_layout, mapFragment)
+                    .commit();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 }
