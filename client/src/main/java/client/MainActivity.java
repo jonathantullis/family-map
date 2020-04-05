@@ -27,6 +27,16 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.main_frame_layout, loginFragment)
                     .commit();
         }
+
+        /* FIXME Delete this */
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        if (mapFragment == null) {
+            mapFragment = createMapFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_frame_layout, mapFragment)
+                    .commit();
+        }
+        /* FIXME Delete this */
     }
 
     private LoginFragment createLoginFragment(String title) {
