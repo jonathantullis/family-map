@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 
 import com.example.client.R;
 
@@ -28,15 +30,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
-        /* FIXME Delete this */
-        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
-        if (mapFragment == null) {
-            mapFragment = createMapFragment();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_frame_layout, mapFragment)
-                    .commit();
-        }
-        /* FIXME Delete this */
+        Iconify.with(new FontAwesomeModule());
     }
 
     private LoginFragment createLoginFragment(String title) {

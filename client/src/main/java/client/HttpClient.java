@@ -159,6 +159,7 @@ public class HttpClient {
                 String json = readString(respBody);
                 System.out.println("Successfully fetched related events");
                 this.dataCache.setAllEventsResult(gson.fromJson(json, AllEventsResult.class));
+                this.dataCache.setAllEventsFiltered(dataCache.getAllEventsResult().getData());
                 return dataCache.getAllEventsResult();
             }
         } catch (IOException e) {

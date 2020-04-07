@@ -82,8 +82,20 @@ public class LoginFragment extends Fragment {
                     }
                 });
 
+        /* FIXME - delete auto login */
+        autoLogin();
+        /* FIXME -  end */
+
         return view;
     }
+
+    /* FIXME - delete auto login */
+    private void autoLogin() {
+        client = HttpClient.getInstance("192.168.1.124", "8080");
+        LoginRequest request = new LoginRequest("jon", "pass");
+        new LoginAsync(this).execute(request);
+    }
+    /* FIXME -  end */
 
     private void login() {
         client = HttpClient.getInstance(getServerHost(), getServerPort());

@@ -1,5 +1,8 @@
 package client;
 
+import java.util.ArrayList;
+
+import _model.Event;
 import _result.AllEventsResult;
 import _result.AllPersonsResult;
 
@@ -9,6 +12,7 @@ public class DataCache {
     private String userPersonId;
     private AllPersonsResult allPersonsResult;
     private AllEventsResult allEventsResult;
+    private ArrayList<Event> allEventsFiltered;
 
     /************  Singleton  **************/
     private static DataCache instance;
@@ -63,5 +67,13 @@ public class DataCache {
 
     public void setAllEventsResult(AllEventsResult allEventsResult) {
         this.allEventsResult = allEventsResult;
+    }
+
+    public ArrayList<Event> getAllEventsFiltered() {
+        return allEventsFiltered;
+    }
+
+    public void setAllEventsFiltered(ArrayList<Event> allEventsFiltered) {
+        this.allEventsFiltered = allEventsFiltered;
     }
 }
