@@ -15,7 +15,6 @@ public class DataCache {
     private AllPersonsResult allPersonsResult;
     private AllEventsResult allEventsResult;
     private ArrayList<Event> allEventsFiltered;
-    private Person selectedPerson;
 
     /************  Singleton  **************/
     private static DataCache instance;
@@ -78,13 +77,5 @@ public class DataCache {
 
     public void setAllEventsFiltered(ArrayList<Event> allEventsFiltered) {
         this.allEventsFiltered = allEventsFiltered;
-    }
-
-    public Person getSelectedPerson() {
-        return selectedPerson;
-    }
-
-    public void setSelectedPerson(Person selectedPerson) {
-        this.selectedPerson = selectedPerson;
     }
 }

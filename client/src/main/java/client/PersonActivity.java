@@ -2,13 +2,13 @@ package client;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.client.R;
+import com.google.gson.Gson;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
@@ -33,6 +34,8 @@ import model.PersonItem;
 
 public class PersonActivity extends AppCompatActivity {
     private DataCache dataCache = DataCache.getInstance();
+    private ArrayList<Person> personFamily = new ArrayList<>();
+    private ArrayList<Event> personEvents = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +45,7 @@ public class PersonActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle("Family Map: Person Details");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Person person = DataCache.getInstance().getSelectedPerson();
-        assert person != null;
+        Person person = new Gson().fromJson(getIntent().getExtras().get("person").toString(), Person.class);
 
         List<PersonDetailItem> personDetailItems = new ArrayList<>();
         personDetailItems.add(new PersonDetailItem(person.getFirstName(), "First Name"));
@@ -54,7 +56,8 @@ public class PersonActivity extends AppCompatActivity {
         List<Event> allEvents = dataCache.getAllEventsFiltered();
         for (Event event : allEvents) {
             if (event.getPersonID().equals(person.getPersonID())) {
-                eventItems.add(new EventItem(event.getEventType().toUpperCase(), event.getCity(), event.getCountry(),
+                personEvents.add(event);
+                eventItems.add(new EventItem(event.getEventID(), event.getEventType().toUpperCase(), event.getCity(), event.getCountry(),
                         event.getYear().toString(), person.getFirstName() + " " + person.getLastName()));
             }
         }
@@ -65,28 +68,19 @@ public class PersonActivity extends AppCompatActivity {
         List<Person> allPersons = dataCache.getAllPersonsResult().getData();
         for (Person item : allPersons) {
             if (item.getPersonID().equals(person.getFatherID())) {
-                personItems.add(new PersonItem(person.getFirstName() + " " + person.getLastName(), "Father", item.getGender()));
+                personFamily.add(item);
+                personItems.add(new PersonItem(item.getPersonID(), item.getFirstName() + " " + item.getLastName(), "Father", item.getGender()));
             } else if (item.getPersonID().equals(person.getMotherID())) {
-                personItems.add(new PersonItem(person.getFirstName() + " " + person.getLastName(), "Mother", item.getGender()));
+                personFamily.add(item);
+                personItems.add(new PersonItem(item.getPersonID(), item.getFirstName() + " " + item.getLastName(), "Mother", item.getGender()));
             } else if (item.getPersonID().equals(person.getSpouseID())) {
-                personItems.add(new PersonItem(person.getFirstName() + " " + person.getLastName(), "Spouse", item.getGender()));
+                personFamily.add(item);
+                personItems.add(new PersonItem(item.getPersonID(), item.getFirstName() + " " + item.getLastName(), "Spouse", item.getGender()));
             } else if (item.getFatherID() != null || item.getMotherID() != null) {
                 if (item.getFatherID().equals(person.getPersonID()) || item.getMotherID().equals(person.getPersonID())) {
-                    personItems.add(new PersonItem(person.getFirstName() + " " + person.getLastName(), "Child", item.getGender()));
+                    personFamily.add(item);
+                    personItems.add(new PersonItem(item.getPersonID(), item.getFirstName() + " " + item.getLastName(), "Child", item.getGender()));
                 }
-            }
-        }
-
-        // Order list as Father, Mother, Spouse, Children
-        for (int i = 0; i < personItems.size(); i++) {
-            if (personItems.get(i).getRelationship().equals("Father")) {
-                Collections.swap(personItems, i, 0);
-            }
-            if (personItems.get(i).getRelationship().equals("Mother")) {
-                Collections.swap(personItems, i, 1);
-            }
-            if (personItems.get(i).getRelationship().equals("Spouse")) {
-                Collections.swap(personItems, i, 2);
             }
         }
 
@@ -212,11 +206,12 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         private void initializeEventView(View eventView, final int childPosition) {
+            EventItem eventItem = eventItems.get(childPosition);
+
             ImageView iconView = eventView.findViewById(R.id.icon);
             iconView.setImageDrawable(new IconDrawable(PersonActivity.this,
                     FontAwesomeIcons.fa_map_marker).colorRes(R.color.primary).sizeDp(40));
 
-            EventItem eventItem = eventItems.get(childPosition);
             String text = eventItem.getEventType() + ": " + eventItem.getCity() + ", " +
                     eventItem.getCountry() + " (" + eventItem.getYear() + ")";
 
@@ -226,11 +221,16 @@ public class PersonActivity extends AppCompatActivity {
             TextView personNameView = eventView.findViewById(R.id.person_name);
             personNameView.setText(eventItem.getPersonName());
 
-            eventView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Do stuff
+            eventView.setOnClickListener(v -> {
+                Event selectedEvent = null;
+                for (Event event : personEvents) {
+                    if (event.getEventID().equals(eventItem.getEventID())) {
+                        selectedEvent = event;
+                    }
                 }
+                Intent intent = new Intent(PersonActivity.this, EventActivity.class);
+                intent.putExtra("event", new Gson().toJson(selectedEvent));
+                startActivity(intent);
             });
         }
 
@@ -258,6 +258,16 @@ public class PersonActivity extends AppCompatActivity {
             personView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    for (Person person : personFamily) {
+                        if (person.getPersonID().equals(personItem.getPersonID())) {
+                            Intent intent = getIntent();
+                            intent.putExtra("person", new Gson().toJson(person));
+                            startActivity(intent);
+                            break;
+                        }
+                    }
+
+                    startActivity(PersonActivity.this.getIntent());
                 }
             });
         }

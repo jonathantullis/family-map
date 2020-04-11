@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
@@ -33,10 +36,19 @@ import _model.Event;
 import _model.Person;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
+    private DataCache dataCache = DataCache.getInstance();
     private GoogleMap map;
     private View view;
     private Person selectedPerson = null;
-    private DataCache dataCache = DataCache.getInstance();
+    private ArrayList<Marker> mapMarkers = new ArrayList<>();
+    private Event selectedEvent;
+
+    public MapFragment (Event selectedEvent) {
+        this.selectedEvent = selectedEvent;
+    }
+
+    public MapFragment () {
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,8 +63,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             if (selectedPerson == null) {
                 return;
             }
-            dataCache.setSelectedPerson(selectedPerson);
             Intent intent = new Intent(this.getContext(), PersonActivity.class);
+            intent.putExtra("person", new Gson().toJson(selectedPerson));
             startActivity(intent);
         });
 
@@ -69,12 +81,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         setDefaultInfoView();
 
         map.setOnMarkerClickListener(marker -> {
-            Event event = (Event) marker.getTag();
-            assert event != null;
-            setEventInfoView(event);
-            marker.showInfoWindow();
+            selectMarker(marker);
             return true;
         });
+
+        if (selectedEvent != null) {
+            selectMarker(selectedEvent);
+        }
     }
 
     private void setDefaultInfoView() {
@@ -158,7 +171,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             );
 
             marker.setTag(event);
+            mapMarkers.add(marker);
         }
+    }
+
+    public void selectMarker(Event event) {
+        for (Marker marker : mapMarkers) {
+            Event markerEvent = (Event) marker.getTag();
+            assert markerEvent != null && event != null;
+            if (markerEvent.getEventID().equals(event.getEventID())) {
+                selectMarker(marker);
+                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+            }
+        }
+    }
+
+    private void selectMarker(Marker marker) {
+        Event event = (Event) marker.getTag();
+        assert event != null;
+        setEventInfoView(event);
+        marker.showInfoWindow();
     }
 
     @Override

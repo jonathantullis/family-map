@@ -29,6 +29,10 @@
             android:name="client.PersonActivity"
             android:parentActivityName="client.MainActivity" />
 
+        <activity
+            android:name="client.EventActivity"
+            android:parentActivityName="client.MainActivity" />
+
     </application>
 
 </manifest>

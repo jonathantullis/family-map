@@ -12,7 +12,7 @@ import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.example.client.R;
 
 public class MainActivity extends AppCompatActivity {
-
+    private DataCache dataCache = DataCache.getInstance();
     private LoginFragment loginFragment;
     private MapFragment mapFragment;
 
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (DataCache.getInstance().getAuthToken() == null) {
+        if (dataCache.getAuthToken() == null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_layout);
             if (loginFragment == null) {
