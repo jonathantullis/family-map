@@ -14,4 +14,8 @@
     <string name="radio_label_female">Female</string>
     <string name="button_label_sign_in">SIGN IN</string>
     <string name="button_label_register">REGISTER</string>
+
+    <!-- Person Activity Expandable View Groups -->
+    <string name="event_group_title">LIFE EVENTS</string>
+    <string name="person_group_title">FAMILY</string>
 </resources>

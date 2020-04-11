@@ -20,7 +20,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
@@ -37,6 +36,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private GoogleMap map;
     private View view;
     private Person selectedPerson = null;
+    private DataCache dataCache = DataCache.getInstance();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             if (selectedPerson == null) {
                 return;
             }
-            // FIXME open person Activity
+            dataCache.setSelectedPerson(selectedPerson);
             Intent intent = new Intent(this.getContext(), PersonActivity.class);
             startActivity(intent);
         });
@@ -80,7 +80,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private void setDefaultInfoView() {
         ImageView genderImageView = view.findViewById(R.id.info_panel_icon);
         genderImageView.setImageDrawable(new IconDrawable(getActivity(), FontAwesomeIcons.fa_android).
-                colorRes(R.color.colorAccent).sizeDp(50));
+                colorRes(R.color.greyDark).sizeDp(50));
 
         TextView textView = view.findViewById(R.id.info_panel_title);
         textView.setText("Click on a marker to see event details");
@@ -88,7 +88,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void setEventInfoView(Event event) {
         // Find the person associated with the event
-        ArrayList<Person> allPersons = DataCache.getInstance().getAllPersonsResult().getData();
+        ArrayList<Person> allPersons = dataCache.getAllPersonsResult().getData();
         Person person = null;
         for (Person item : allPersons) {
             if (item.getPersonID().equals(event.getPersonID())) {
@@ -102,10 +102,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         ImageView genderImageView = view.findViewById(R.id.info_panel_icon);
         if (person.getGender().toLowerCase().equals("m")) {
             genderImageView.setImageDrawable(new IconDrawable(getActivity(), FontAwesomeIcons.fa_male).
-                    colorRes(R.color.colorMale).sizeDp(40));
+                    colorRes(R.color.male).sizeDp(40));
         } else {
             genderImageView.setImageDrawable(new IconDrawable(getActivity(), FontAwesomeIcons.fa_female).
-                    colorRes(R.color.colorFemale).sizeDp(40));
+                    colorRes(R.color.female).sizeDp(40));
         }
 
         TextView name = view.findViewById(R.id.info_panel_title);
@@ -124,8 +124,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (map == null) {
             return;
         }
-        ArrayList<Event> events = DataCache.getInstance().getAllEventsFiltered();
+        ArrayList<Event> events = dataCache.getAllEventsFiltered();
         ArrayList<Float> colors = new ArrayList<>();
+        colors.add(BitmapDescriptorFactory.HUE_ORANGE);
+        colors.add(BitmapDescriptorFactory.HUE_ROSE);
+        colors.add(BitmapDescriptorFactory.HUE_AZURE);
         colors.add(BitmapDescriptorFactory.HUE_BLUE);
         colors.add(BitmapDescriptorFactory.HUE_CYAN);
         colors.add(BitmapDescriptorFactory.HUE_GREEN);
@@ -133,30 +136,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         colors.add(BitmapDescriptorFactory.HUE_RED);
         colors.add(BitmapDescriptorFactory.HUE_VIOLET);
         colors.add(BitmapDescriptorFactory.HUE_YELLOW);
-        final float COLOR_DEATH = BitmapDescriptorFactory.HUE_AZURE;
-        final float COLOR_MARRIAGE = BitmapDescriptorFactory.HUE_ROSE;
-        final float COLOR_BIRTH = BitmapDescriptorFactory.HUE_ORANGE;
 
         int numColorsUsed = 0;
         Marker marker = null;
-        HashMap<String, Float> colorsUsed = new HashMap<>(); // KEY: eventType   VAL: color
+        HashMap<String, Float> eventColors = new HashMap<>(); // KEY: eventType   VAL: color
 
         for (Event event : events) {
             float color;
-            if (event.getEventType().toLowerCase().equals("birth")) {
-                color = COLOR_BIRTH;
-            } else if (event.getEventType().toLowerCase().equals("marriage")) {
-                color = COLOR_MARRIAGE;
-            } else if (event.getEventType().toLowerCase().equals("death")) {
-                color = COLOR_DEATH;
+            if (eventColors.containsKey(event.getEventType().toUpperCase())) {
+                color = eventColors.get(event.getEventType().toUpperCase());
             } else {
-                if (colorsUsed.containsKey(event.getEventType())) {
-                    color = colorsUsed.get(event.getEventType());
-                } else {
-                    colorsUsed.put(event.getEventType(), colors.get(numColorsUsed % colors.size()));
-                    numColorsUsed++;
-                    color = colorsUsed.get(event.getEventType());
-                }
+                eventColors.put(event.getEventType().toUpperCase(), colors.get(numColorsUsed % colors.size()));
+                numColorsUsed++;
+                color = eventColors.get(event.getEventType().toUpperCase());
             }
 
             marker = map.addMarker(new MarkerOptions()

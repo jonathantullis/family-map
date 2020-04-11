@@ -21,13 +21,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_layout);
-        if (loginFragment == null) {
-            loginFragment = createLoginFragment("This is my title");
-            fragmentManager.beginTransaction()
-                    .add(R.id.main_frame_layout, loginFragment)
-                    .commit();
+        if (DataCache.getInstance().getAuthToken() == null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_layout);
+            if (loginFragment == null) {
+                loginFragment = createLoginFragment("This is my title");
+                fragmentManager.beginTransaction()
+                        .add(R.id.main_frame_layout, loginFragment)
+                        .commit();
+            }
+        } else {
+            switchToMapFragment();
         }
 
         Iconify.with(new FontAwesomeModule());

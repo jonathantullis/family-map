@@ -1,8 +1,10 @@
 package client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import _model.Event;
+import _model.Person;
 import _result.AllEventsResult;
 import _result.AllPersonsResult;
 
@@ -13,6 +15,7 @@ public class DataCache {
     private AllPersonsResult allPersonsResult;
     private AllEventsResult allEventsResult;
     private ArrayList<Event> allEventsFiltered;
+    private Person selectedPerson;
 
     /************  Singleton  **************/
     private static DataCache instance;
@@ -75,5 +78,13 @@ public class DataCache {
 
     public void setAllEventsFiltered(ArrayList<Event> allEventsFiltered) {
         this.allEventsFiltered = allEventsFiltered;
+    }
+
+    public Person getSelectedPerson() {
+        return selectedPerson;
+    }
+
+    public void setSelectedPerson(Person selectedPerson) {
+        this.selectedPerson = selectedPerson;
     }
 }

@@ -21,12 +21,13 @@
         <activity android:name="client.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="client.PersonActivity" />
+        <activity
+            android:name="client.PersonActivity"
+            android:parentActivityName="client.MainActivity" />
 
     </application>
 
