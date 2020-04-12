@@ -30,9 +30,9 @@ public class RegisterAsync extends AsyncTask<RegisterRequest, Integer, RegisterR
         if (result.isSuccess()) {
             // Call async to get all related family data
             DataCache dataCache = DataCache.getInstance();
-            AllEventsRequest allEventsRequest = new AllEventsRequest(dataCache.getUserName(), dataCache.getAuthToken());
+            AllEventsRequest allEventsRequest = new AllEventsRequest(dataCache.userName(), dataCache.authToken());
             new FetchAllEventsAsync(parentFragment).execute(allEventsRequest);
-            AllPersonsRequest allPersonsRequest = new AllPersonsRequest(dataCache.getUserName(), dataCache.getAuthToken());
+            AllPersonsRequest allPersonsRequest = new AllPersonsRequest(dataCache.userName(), dataCache.authToken());
             new FetchAllPersonsAsync(parentFragment).execute(allPersonsRequest);
         } else {
             Toast toast = Toast.makeText(parentFragment.getContext(), result.getMessage(), Toast.LENGTH_SHORT);

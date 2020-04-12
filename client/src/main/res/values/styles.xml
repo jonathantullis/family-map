@@ -6,10 +6,8 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/greyLight</item>
-    </style>
 
-    <style name="HeaderBar">
-        <item name="android:background">@color/primary</item>
+        <item name="colorControlActivated">@color/primary</item>
     </style>
 
 </resources>

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -103,7 +102,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void setEventInfoView(Event event) {
         // Find the person associated with the event
-        ArrayList<Person> allPersons = dataCache.getAllPersonsResult().getData();
+        ArrayList<Person> allPersons = dataCache.allPersonsResult().getData();
         Person person = null;
         for (Person item : allPersons) {
             if (item.getPersonID().equals(event.getPersonID())) {
@@ -139,7 +138,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (map == null) {
             return;
         }
-        ArrayList<Event> events = dataCache.getAllEventsFiltered();
+        ArrayList<Event> events = dataCache.allEventsFiltered();
         ArrayList<Float> colors = new ArrayList<>();
         colors.add(BitmapDescriptorFactory.HUE_ORANGE);
         colors.add(BitmapDescriptorFactory.HUE_ROSE);

@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (dataCache.getAuthToken() == null) {
+        if (dataCache.authToken() == null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_layout);
             if (loginFragment == null) {

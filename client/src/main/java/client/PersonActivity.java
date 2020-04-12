@@ -53,7 +53,7 @@ public class PersonActivity extends AppCompatActivity {
         personDetailItems.add(new PersonDetailItem(person.getGender().toLowerCase().equals("f") ? "Female" : "Male", "Gender"));
 
         List<EventItem> eventItems = new ArrayList<>();
-        List<Event> allEvents = dataCache.getAllEventsFiltered();
+        List<Event> allEvents = dataCache.allEventsFiltered();
         for (Event event : allEvents) {
             if (event.getPersonID().equals(person.getPersonID())) {
                 personEvents.add(event);
@@ -65,7 +65,7 @@ public class PersonActivity extends AppCompatActivity {
         Collections.sort(eventItems, new YearComparator());
 
         List<PersonItem> personItems = new ArrayList<>();
-        List<Person> allPersons = dataCache.getAllPersonsResult().getData();
+        List<Person> allPersons = dataCache.allPersonsResult().getData();
         for (Person item : allPersons) {
             if (item.getPersonID().equals(person.getFatherID())) {
                 personFamily.add(item);

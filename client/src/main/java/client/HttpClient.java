@@ -10,7 +10,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import _model.AuthToken;
 import _request.*;
 import _result.*;
 
@@ -120,7 +119,7 @@ public class HttpClient {
 
             http.setRequestMethod("GET");
             http.setDoOutput(false);	// There is NO request body
-            http.addRequestProperty("Authorization", dataCache.getAuthToken());
+            http.addRequestProperty("Authorization", dataCache.authToken());
             http.addRequestProperty("Accept", "application/json"); // We want json
 
             http.connect();
@@ -131,7 +130,7 @@ public class HttpClient {
                 String json = readString(respBody);
                 System.out.println("Successfully fetched related persons");
                 this.dataCache.setAllPersonsResult(gson.fromJson(json, AllPersonsResult.class));
-                return dataCache.getAllPersonsResult();
+                return dataCache.allPersonsResult();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,7 +147,7 @@ public class HttpClient {
 
             http.setRequestMethod("GET");
             http.setDoOutput(false);	// There is NO request body
-            http.addRequestProperty("Authorization", dataCache.getAuthToken());
+            http.addRequestProperty("Authorization", dataCache.authToken());
             http.addRequestProperty("Accept", "application/json"); // We want json
 
             http.connect();
@@ -159,8 +158,8 @@ public class HttpClient {
                 String json = readString(respBody);
                 System.out.println("Successfully fetched related events");
                 this.dataCache.setAllEventsResult(gson.fromJson(json, AllEventsResult.class));
-                this.dataCache.setAllEventsFiltered(dataCache.getAllEventsResult().getData());
-                return dataCache.getAllEventsResult();
+                this.dataCache.setAllEventsFiltered(dataCache.allEventsResult().getData());
+                return dataCache.allEventsResult();
             }
         } catch (IOException e) {
             e.printStackTrace();
