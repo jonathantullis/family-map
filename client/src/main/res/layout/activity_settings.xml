@@ -9,4 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settings_recycler_view"
+        android:text="Sign Out"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
+
 </RelativeLayout>

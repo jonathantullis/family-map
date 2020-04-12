@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -55,6 +55,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         SettingsAdapter adapter = new SettingsAdapter(settingsItems);
         recyclerView.setAdapter(adapter);
+
+        Button buttonView = findViewById(R.id.logout_button);
+        buttonView.setOnClickListener(v -> {
+            logout();
+        });
     }
 
     @Override
@@ -64,6 +69,12 @@ public class SettingsActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         return false;
+    }
+
+    public void logout() {
+        dataCache.invalidateData();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private class SettingsAdapter extends RecyclerView.Adapter<SettingsViewHolder> {

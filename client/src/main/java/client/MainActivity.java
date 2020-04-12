@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager fragmentManager = getSupportFragmentManager();
             loginFragment = (LoginFragment) fragmentManager.findFragmentById(R.id.login_layout);
             if (loginFragment == null) {
-                loginFragment = createLoginFragment("This is my title");
+                loginFragment = createLoginFragment();
                 fragmentManager.beginTransaction()
-                        .add(R.id.main_frame_layout, loginFragment)
+                        .replace(R.id.main_frame_layout, loginFragment)
                         .commit();
             }
         } else {
@@ -43,13 +43,8 @@ public class MainActivity extends AppCompatActivity {
         Iconify.with(new FontAwesomeModule());
     }
 
-    private LoginFragment createLoginFragment(String title) {
+    private LoginFragment createLoginFragment() {
         LoginFragment fragment = new LoginFragment();
-
-        Bundle args = new Bundle();
-        args.putString(LoginFragment.ARG_TITLE, title);
-        fragment.setArguments(args);
-
         return fragment;
     }
 

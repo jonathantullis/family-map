@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
@@ -41,6 +43,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Person selectedPerson = null;
     private ArrayList<Marker> mapMarkers = new ArrayList<>();
     private Event selectedEvent;
+    private Marker selectedMarker;
+    private Polyline spouseLine;
 
     public MapFragment (Event selectedEvent) {
         this.selectedEvent = selectedEvent;
@@ -69,6 +73,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             startActivity(intent);
         });
 
+        // FIXME remove automatic spouse lines
+//        dataCache.settings().setSpouseLines(true);
+
         return view;
     }
 
@@ -78,11 +85,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         map.setOnMapLoadedCallback(this);
 
         addEventMarkers();
-
+        drawLines();
         setDefaultInfoView();
 
         map.setOnMarkerClickListener(marker -> {
             selectMarker(marker);
+            drawLines();
             return true;
         });
 
@@ -176,6 +184,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
+    private void drawLines() {
+        if (this.selectedPerson != null) {
+            if (dataCache.settings().isSpouseLines()) {
+                // Find the selected person's spouse
+                Person spouse = null;
+                for (Person person : dataCache.allPersonsResult().getData()) {
+                    if (person.getPersonID().equals(selectedPerson.getSpouseID())) {
+                        spouse = person;
+                    }
+                }
+                if (spouse == null) {
+                    return;
+                }
+
+                // Find the marker for the EARLIEST event of the spouse
+                Marker earliestEventMarker = null;
+                for (Marker marker : mapMarkers) {
+                    Event event = (Event) marker.getTag();
+                    assert event != null;
+                    if (event.getPersonID().equals(spouse.getPersonID())) {
+                        earliestEventMarker = marker;
+                    }
+                }
+
+                if (spouseLine != null) {
+                    spouseLine.remove();
+                }
+                spouseLine = map.addPolyline(new PolylineOptions()
+                        .clickable(false)
+                        .add(earliestEventMarker.getPosition(), selectedMarker.getPosition())
+                        .color(R.color.male)
+                );
+            }
+        }
+    }
+
     public void selectMarker(Event event) {
         for (Marker marker : mapMarkers) {
             Event markerEvent = (Event) marker.getTag();
@@ -188,6 +232,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void selectMarker(Marker marker) {
+        selectedMarker = marker;
         Event event = (Event) marker.getTag();
         assert event != null;
         setEventInfoView(event);

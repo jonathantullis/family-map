@@ -62,8 +62,6 @@ public class PersonActivity extends AppCompatActivity {
             }
         }
 
-        Collections.sort(eventItems, new YearComparator());
-
         List<PersonItem> personItems = new ArrayList<>();
         List<Person> allPersons = dataCache.allPersonsResult().getData();
         for (Person item : allPersons) {
@@ -345,13 +343,6 @@ public class PersonActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
 
-        }
-    }
-
-    public class YearComparator implements Comparator<EventItem> {
-        @Override
-        public int compare(EventItem o1, EventItem o2) {
-            return o1.getYear().compareTo(o2.getYear());
         }
     }
 

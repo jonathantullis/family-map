@@ -3,7 +3,7 @@ package client;
 public class Settings {
     private boolean lifeStoryLines = false;
     private boolean familyTreeLines = false;
-    private boolean spouseLines = true;
+    private boolean spouseLines = false;
     private boolean fathersSide = true;
     private boolean mothersSide = true;
     private boolean maleEvents = true;
