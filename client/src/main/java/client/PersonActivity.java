@@ -2,7 +2,7 @@ package client;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -92,6 +92,15 @@ public class PersonActivity extends AppCompatActivity {
 
         PersonAdapter adapter = new PersonAdapter(personDetailItems);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        return false;
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -230,6 +239,8 @@ public class PersonActivity extends AppCompatActivity {
                 }
                 Intent intent = new Intent(PersonActivity.this, EventActivity.class);
                 intent.putExtra("event", new Gson().toJson(selectedEvent));
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             });
         }
@@ -261,13 +272,17 @@ public class PersonActivity extends AppCompatActivity {
                     for (Person person : personFamily) {
                         if (person.getPersonID().equals(personItem.getPersonID())) {
                             Intent intent = getIntent();
+                            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra("person", new Gson().toJson(person));
                             startActivity(intent);
                             break;
                         }
                     }
-
-                    startActivity(PersonActivity.this.getIntent());
+                    Intent intent = PersonActivity.this.getIntent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 }
             });
         }

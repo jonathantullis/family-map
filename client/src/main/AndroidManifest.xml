@@ -33,6 +33,10 @@
             android:name="client.EventActivity"
             android:parentActivityName="client.MainActivity" />
 
+        <activity
+            android:name="client.SettingsActivity"
+            android:parentActivityName="client.MainActivity" />
+
     </application>
 
 </manifest>

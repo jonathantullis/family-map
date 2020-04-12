@@ -65,6 +65,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
             Intent intent = new Intent(this.getContext(), PersonActivity.class);
             intent.putExtra("person", new Gson().toJson(selectedPerson));
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         });
 
