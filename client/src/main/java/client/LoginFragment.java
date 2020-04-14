@@ -25,9 +25,6 @@ import async.LoginAsync;
 import async.RegisterAsync;
 
 public class LoginFragment extends Fragment {
-
-    public static final String ARG_TITLE = "Title";
-
     private View view;
     private HttpClient client;
 
@@ -83,7 +80,7 @@ public class LoginFragment extends Fragment {
                 });
 
         /* FIXME - delete auto login */
-        autoLogin();
+//        autoLogin();
         /* FIXME -  end */
 
         return view;

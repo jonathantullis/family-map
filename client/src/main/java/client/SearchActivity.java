@@ -61,6 +61,11 @@ public class SearchActivity extends AppCompatActivity {
             textField.setText("");
         });
 
+        RecyclerView recyclerView = findViewById(R.id.search_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        SearchAdapter adapter = new SearchAdapter(personItems, eventItems);
+        recyclerView.setAdapter(adapter);
+
         textField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -69,36 +74,59 @@ public class SearchActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchText = s.toString();
                 filterBySearch();
+                adapter.notifyDataSetChanged();
             }
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
-
-        RecyclerView recyclerView = findViewById(R.id.search_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        SearchAdapter adapter = new SearchAdapter(personItems, eventItems);
-        recyclerView.setAdapter(adapter);
     }
 
     private void filterBySearch() {
         System.out.println("Reached");
         System.out.println("Text Value: " + searchText);
 
-        for (Person person : dataCache.allPersons()) {
-            personItems.add(new PersonItem(person.getPersonID(), person.getFirstName() +
-                    " " + person.getLastName(), null, person.getGender()));
-        }
+        personItems.clear();
+        eventItems.clear();
 
-        for (Event event : dataCache.allEventsFiltered()) {
-            String personName = null;
+        if (searchText.length() > 0) {
             for (Person person : dataCache.allPersons()) {
-                if (event.getPersonID().equals(person.getPersonID())) {
-                    personName = person.getFirstName() + " " + person.getLastName();
+                boolean containsSearchText = false;
+                if (person.getFirstName().toLowerCase().contains(searchText.toLowerCase())) {
+                    containsSearchText = true;
+                } else if (person.getLastName().toLowerCase().contains(searchText.toLowerCase())) {
+                    containsSearchText = true;
+                }
+
+                if (containsSearchText) {
+                    personItems.add(new PersonItem(person.getPersonID(), person.getFirstName() +
+                            " " + person.getLastName(), null, person.getGender()));
                 }
             }
-            eventItems.add(new EventItem(event.getEventID(), event.getEventType(), event.getCity(),
-                    event.getCountry(), event.getYear().toString(), personName));
+
+        for (Event event : dataCache.allEventsFiltered()) {
+            boolean containsSearchText = false;
+            if (event.getCountry().toLowerCase().contains(searchText.toLowerCase())) {
+                containsSearchText = true;
+            } else if (event.getCity().toLowerCase().contains(searchText.toLowerCase())) {
+                containsSearchText = true;
+            } else if (event.getEventType().toLowerCase().contains(searchText.toLowerCase())) {
+                containsSearchText = true;
+            } else if (event.getYear().toString().toLowerCase().contains(searchText.toLowerCase())) {
+                containsSearchText = true;
+            }
+
+            if (containsSearchText) {
+                String personName = null;
+                for (Person person : dataCache.allPersons()) {
+                    if (event.getPersonID().equals(person.getPersonID())) {
+                        personName = person.getFirstName() + " " + person.getLastName();
+                    }
+                }
+                eventItems.add(new EventItem(event.getEventID(), event.getEventType(), event.getCity(),
+                        event.getCountry(), event.getYear().toString(), personName));
+            }
+            }
         }
     }
 
