@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import _model.Event;
+import _model.Person;
 import _result.AllEventsResult;
 import _result.AllPersonsResult;
 import model.EventItem;
@@ -13,9 +14,9 @@ public class DataCache {
     private String _authToken;
     private String _userName;
     private String _userPersonId;
-    private AllPersonsResult _allPersonsResult;
-    private AllEventsResult _allEventsResult;
-    private ArrayList<Event> _allEventsFiltered;
+    private ArrayList<Person> _allPersons = new ArrayList<>();
+    private ArrayList<Event> _allEvents = new ArrayList<>();
+    private ArrayList<Event> _allEventsFiltered = new ArrayList<>();
     private Settings _settings = new Settings();
 
     /************  Singleton  **************/
@@ -33,9 +34,9 @@ public class DataCache {
         this._authToken = null;
         this. _userName = null;
         this._userPersonId = null;
-        this._allPersonsResult = null;
-        this._allEventsResult = null;
-        this._allEventsFiltered = null;
+        this._allPersons = new ArrayList<>();
+        this._allEvents = new ArrayList<>();
+        this._allEventsFiltered = new ArrayList<>();
         this._settings = new Settings();
     }
 
@@ -55,12 +56,12 @@ public class DataCache {
         this._userPersonId = userPersonId;
     }
 
-    public AllPersonsResult allPersonsResult() {
-        return _allPersonsResult;
+    public ArrayList<Person> allPersons() {
+        return _allPersons;
     }
 
-    public void setAllPersonsResult(AllPersonsResult allPersonsResult) {
-        this._allPersonsResult = allPersonsResult;
+    public void setAllPersons(ArrayList<Person> allPersons) {
+        this._allPersons = allPersons;
     }
 
     public String userName() {
@@ -71,13 +72,12 @@ public class DataCache {
         this._userName = userName;
     }
 
-    public AllEventsResult allEventsResult() {
-        return _allEventsResult;
+    public ArrayList<Event> allEvents() {
+        return _allEvents;
     }
 
-    public void setAllEventsResult(AllEventsResult allEventsResult) {
-        this._allEventsResult = allEventsResult;
-        Collections.sort(this._allEventsResult.getData(), new YearComparator());
+    public void setAllEvents(ArrayList<Event> allEvents) {
+        this._allEvents = allEvents;
     }
 
     public ArrayList<Event> allEventsFiltered() {

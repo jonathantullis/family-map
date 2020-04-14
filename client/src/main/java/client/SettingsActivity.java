@@ -36,19 +36,19 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         settingsItems.add(new SettingsItem(1, "Life Story Lines",
-                "Show life story lines", dataCache.settings().isLifeStoryLines()));
+                "Show life story lines", dataCache.settings().showLifeStoryLines()));
         settingsItems.add(new SettingsItem(2 ,"Family Tree Lines",
-                "Show family tree lines", dataCache.settings().isFamilyTreeLines()));
+                "Show family tree lines", dataCache.settings().showFamilyTreeLines()));
         settingsItems.add(new SettingsItem(3, "Spouse Lines",
-                "Show spouse lines", dataCache.settings().isSpouseLines()));
+                "Show spouse lines", dataCache.settings().showSpouseLines()));
         settingsItems.add(new SettingsItem(4, "Father's Side",
-                "Filter by father's side of the family", dataCache.settings().isFathersSide()));
+                "Filter by father's side of the family", dataCache.settings().showFathersSide()));
         settingsItems.add(new SettingsItem(5, "Mother's Side",
-                "Filter by mother's side of the family", dataCache.settings().isMothersSide()));
+                "Filter by mother's side of the family", dataCache.settings().showMothersSide()));
         settingsItems.add(new SettingsItem(6, "Male Events",
-                "Filter events based on gender", dataCache.settings().isMaleEvents()));
+                "Filter events based on gender", dataCache.settings().showMaleEvents()));
         settingsItems.add(new SettingsItem(7, "Female Events",
-                "Filter events based on gender", dataCache.settings().isFemaleEvents()));
+                "Filter events based on gender", dataCache.settings().showFemaleEvents()));
 
         RecyclerView recyclerView = findViewById(R.id.settings_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

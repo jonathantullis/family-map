@@ -129,8 +129,9 @@ public class HttpClient {
                 InputStream respBody = http.getInputStream();
                 String json = readString(respBody);
                 System.out.println("Successfully fetched related persons");
-                this.dataCache.setAllPersonsResult(gson.fromJson(json, AllPersonsResult.class));
-                return dataCache.allPersonsResult();
+                AllPersonsResult allPersonsResult = gson.fromJson(json, AllPersonsResult.class);
+                this.dataCache.setAllPersons(allPersonsResult.getData());
+                return allPersonsResult;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,9 +158,10 @@ public class HttpClient {
                 InputStream respBody = http.getInputStream();
                 String json = readString(respBody);
                 System.out.println("Successfully fetched related events");
-                this.dataCache.setAllEventsResult(gson.fromJson(json, AllEventsResult.class));
-                this.dataCache.setAllEventsFiltered(dataCache.allEventsResult().getData());
-                return dataCache.allEventsResult();
+                AllEventsResult allEventsResult = gson.fromJson(json, AllEventsResult.class);
+                this.dataCache.setAllEvents(allEventsResult.getData());
+                this.dataCache.setAllEventsFiltered(dataCache.allEvents());
+                return allEventsResult;
             }
         } catch (IOException e) {
             e.printStackTrace();

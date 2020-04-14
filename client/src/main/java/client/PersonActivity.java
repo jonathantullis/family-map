@@ -63,8 +63,7 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         List<PersonItem> personItems = new ArrayList<>();
-        List<Person> allPersons = dataCache.allPersonsResult().getData();
-        for (Person item : allPersons) {
+        for (Person item : dataCache.allPersons()) {
             if (item.getPersonID().equals(person.getFatherID())) {
                 personFamily.add(item);
                 personItems.add(new PersonItem(item.getPersonID(), item.getFirstName() + " " + item.getLastName(), "Father", item.getGender()));

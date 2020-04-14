@@ -67,11 +67,11 @@ public class MainActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.custom_menu_bar, null);
         Objects.requireNonNull(getSupportActionBar()).setCustomView(view);
 
-        ImageView settingsImageView = view.findViewById(R.id.settings_button);
-        settingsImageView.setImageDrawable(new IconDrawable(this, FontAwesomeIcons.fa_gear).
+        ImageView gearImageView = view.findViewById(R.id.settings_button);
+        gearImageView.setImageDrawable(new IconDrawable(this, FontAwesomeIcons.fa_gear).
                 colorRes(R.color.light).sizeDp(25));
 
-        settingsImageView.setOnClickListener(v -> {
+        gearImageView.setOnClickListener(v -> {
             Intent intent = new Intent(this, SettingsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

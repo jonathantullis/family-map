@@ -3,6 +3,7 @@ package client;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,13 +31,17 @@ import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
 import com.example.client.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import _model.Event;
 import _model.Person;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
+    private final float DEFAULT_LINE_WIDTH = 12;
     private DataCache dataCache = DataCache.getInstance();
     private GoogleMap map;
     private View view;
@@ -45,13 +50,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Event selectedEvent;
     private Marker selectedMarker;
     private Polyline spouseLine;
+    private ArrayList<Polyline> familyTreeLines = new ArrayList<>();
+    private ArrayList<Polyline> lifeStoryLines = new ArrayList<>();
 
     public MapFragment (Event selectedEvent) {
         this.selectedEvent = selectedEvent;
     }
-
-    public MapFragment () {
-    }
+    public MapFragment () {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,8 +78,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             startActivity(intent);
         });
 
-        // FIXME remove automatic spouse lines
-//        dataCache.settings().setSpouseLines(true);
+        filterEvents();
 
         return view;
     }
@@ -90,13 +94,85 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         map.setOnMarkerClickListener(marker -> {
             selectMarker(marker);
-            drawLines();
             return true;
         });
 
         if (selectedEvent != null) {
             selectMarker(selectedEvent);
         }
+    }
+
+    private void filterEvents() {
+        ArrayList<Event> filteredEvents = new ArrayList<>();
+        // Filter by side of family
+        Person user = getPerson(dataCache.userPersonId(), dataCache.allPersons());
+        if (dataCache.settings().showFathersSide() && dataCache.settings().showMothersSide()) {
+            filteredEvents = dataCache.allEvents();
+        } else {
+            if (dataCache.settings().showFathersSide()) {
+                // Add father's side only
+                Person father = getPerson(user.getFatherID(), dataCache.allPersons());
+                ArrayList<Person> fathersSide = getPersonsRecursive(father);
+
+                for (Person person : fathersSide) {
+                    ArrayList<Event> events = getAllEvents(person.getPersonID(), dataCache.allEvents());
+                    filteredEvents.addAll(events);
+                }
+            } else if (dataCache.settings().showMothersSide()) {
+                // Add mother's side only
+                Person mother = getPerson(user.getMotherID(), dataCache.allPersons());
+                ArrayList<Person> mothersSide = getPersonsRecursive(mother);
+
+                for (Person person : mothersSide) {
+                    ArrayList<Event> events = getAllEvents(person.getPersonID(), dataCache.allEvents());
+                    filteredEvents.addAll(events);
+                }
+            }
+            // Add the root user and spouse events
+            filteredEvents.addAll(getAllEvents(user.getPersonID(), dataCache.allEvents()));
+            filteredEvents.addAll(getAllEvents(user.getSpouseID(), dataCache.allEvents()));
+        }
+
+        // Filter by gender
+        if (!(dataCache.settings().showMaleEvents() && dataCache.settings().showFemaleEvents())) {
+            String gender = null;
+            if (dataCache.settings().showMaleEvents()) {
+                gender = "m";
+            } else if (dataCache.settings().showFemaleEvents()) {
+                gender = "f";
+            }
+
+            ArrayList<Event> filteredByGender = new ArrayList<>();
+            if (gender != null) {
+                for (Event event : filteredEvents) {
+                    Person person = getPerson(event.getPersonID(), dataCache.allPersons());
+                    assert person != null;
+                    if (person.getGender().toLowerCase().equals(gender)) {
+                        filteredByGender.add(event);
+                    }
+                }
+            }
+            filteredEvents = filteredByGender;
+        }
+        // Else no need to filter by gender
+
+        dataCache.setAllEventsFiltered(filteredEvents);
+    }
+
+    private ArrayList<Person> getPersonsRecursive(Person root) {
+        ArrayList<Person> list = new ArrayList<>();
+        if (root == null) {
+            return list;
+        }
+        list.add(root);
+
+        Person father = getPerson(root.getFatherID(), dataCache.allPersons());
+        Person mother = getPerson(root.getMotherID(), dataCache.allPersons());
+
+        list.addAll(getPersonsRecursive(father));
+        list.addAll(getPersonsRecursive(mother));
+
+        return list;
     }
 
     private void setDefaultInfoView() {
@@ -110,9 +186,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void setEventInfoView(Event event) {
         // Find the person associated with the event
-        ArrayList<Person> allPersons = dataCache.allPersonsResult().getData();
         Person person = null;
-        for (Person item : allPersons) {
+        for (Person item : dataCache.allPersons()) {
             if (item.getPersonID().equals(event.getPersonID())) {
                 person = item;
             }
@@ -185,39 +260,172 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void drawLines() {
+        // Remove any existing lines before drawing new ones
+        removeAllLines();
         if (this.selectedPerson != null) {
-            if (dataCache.settings().isSpouseLines()) {
-                // Find the selected person's spouse
-                Person spouse = null;
-                for (Person person : dataCache.allPersonsResult().getData()) {
-                    if (person.getPersonID().equals(selectedPerson.getSpouseID())) {
-                        spouse = person;
-                    }
-                }
-                if (spouse == null) {
-                    return;
-                }
-
-                // Find the marker for the EARLIEST event of the spouse
-                Marker earliestEventMarker = null;
-                for (Marker marker : mapMarkers) {
-                    Event event = (Event) marker.getTag();
-                    assert event != null;
-                    if (event.getPersonID().equals(spouse.getPersonID())) {
-                        earliestEventMarker = marker;
-                    }
-                }
-
-                if (spouseLine != null) {
-                    spouseLine.remove();
-                }
-                spouseLine = map.addPolyline(new PolylineOptions()
-                        .clickable(false)
-                        .add(earliestEventMarker.getPosition(), selectedMarker.getPosition())
-                        .color(R.color.male)
-                );
+            if (dataCache.settings().showSpouseLines()) {
+                drawSpouseLines(selectedPerson.getSpouseID());
+            }
+            if (dataCache.settings().showFamilyTreeLines()) {
+                drawFamilyTreeLines();
+            }
+            if (dataCache.settings().showLifeStoryLines()) {
+                drawLifeStoryLines();
             }
         }
+    }
+
+    private void drawSpouseLines(String spouseID) {
+        // Find the selected person's spouse
+        Person spouse = getPerson(spouseID, dataCache.allPersons());
+        if (spouse != null) {
+            // Find the marker for the EARLIEST event of the spouse
+            Marker earliestEventMarker = getEarliestEventMarker(spouse.getPersonID(), mapMarkers);
+            if (earliestEventMarker == null) {
+                return;
+            }
+
+            spouseLine = map.addPolyline(new PolylineOptions()
+                    .add(earliestEventMarker.getPosition(), selectedMarker.getPosition())
+                    .width(DEFAULT_LINE_WIDTH)
+                    .color(Color.rgb(194, 18, 204))
+            );
+        }
+    }
+
+    private void drawLifeStoryLines() {
+        ArrayList<Event> events = getAllEvents(selectedPerson.getPersonID(), dataCache.allEventsFiltered());
+        for (Event event : events) {
+            Marker eventMarker = getAssociatedMarker(event, mapMarkers);
+            if (eventMarker != null) {
+                Polyline line = map.addPolyline(new PolylineOptions()
+                        .add(eventMarker.getPosition(), selectedMarker.getPosition())
+                        .width(DEFAULT_LINE_WIDTH)
+                        .color(Color.rgb(28, 168, 138))
+                );
+                lifeStoryLines.add(line);
+            }
+        }
+    }
+
+    private void drawFamilyTreeLines() {
+        drawFamilyTreeLinesRecursive(selectedPerson, selectedMarker, DEFAULT_LINE_WIDTH);
+    }
+
+    private void drawFamilyTreeLinesRecursive(Person currentPerson, Marker currentMarker, float lineWidth) {
+        if (currentPerson == null || currentMarker == null) {
+            return;
+        }
+
+        Person mother = getPerson(currentPerson.getMotherID(), dataCache.allPersons());
+        Person father = getPerson(currentPerson.getFatherID(), dataCache.allPersons());
+        Marker motherEventMarker = getEarliestEventMarker(currentPerson.getMotherID(), mapMarkers);
+        Marker fatherEventMarker = getEarliestEventMarker(currentPerson.getFatherID(), mapMarkers);
+
+        drawFamilyTreeLinesRecursive(mother, motherEventMarker, lineWidth * (float) 0.6);
+        drawFamilyTreeLinesRecursive(father, fatherEventMarker, lineWidth * (float) 0.6);
+
+        // Draw lines and return
+        if (motherEventMarker != null) {
+            Polyline line = map.addPolyline(new PolylineOptions()
+                    .add(motherEventMarker.getPosition(), currentMarker.getPosition())
+                    .color(Color.rgb(13, 71, 161))
+                    .width(lineWidth)
+            );
+            familyTreeLines.add(line);
+        }
+        if (fatherEventMarker != null) {
+            Polyline line = map.addPolyline(new PolylineOptions()
+                    .add(fatherEventMarker.getPosition(), currentMarker.getPosition())
+                    .color(Color.rgb(13, 71, 161))
+                    .width(lineWidth)
+            );
+            familyTreeLines.add(line);
+        }
+    }
+
+    private Marker getEarliestEventMarker(String personID, List<Marker> list) {
+        if (personID == null || list == null) {
+            return null;
+        }
+        Marker earliestMarker = null;
+        for (Marker marker : list) {
+            Event event = (Event) marker.getTag();
+            assert event != null;
+            if (personID.equals(event.getPersonID())) {
+                if (earliestMarker == null) {
+                    earliestMarker = marker;
+                } else {
+                    Event earliestMarkerEvent = (Event) earliestMarker.getTag();
+                    assert earliestMarkerEvent != null;
+                    if (earliestMarkerEvent.getYear() > event.getYear()) {
+                        earliestMarker = marker;
+                    }
+                }
+            }
+        }
+        return earliestMarker;
+    }
+
+    private Person getPerson(String personID, List<Person> personList) {
+        if (personID == null) {
+            return null;
+        }
+        Person result = null;
+        for (Person person : personList) {
+            if (person.getPersonID().equals(personID)) {
+                result = person;
+            }
+        }
+        return result;
+    }
+
+    private ArrayList<Event> getAllEvents(String personID, List<Event> eventList) {
+        ArrayList<Event> result = new ArrayList<>();
+        if (personID == null || eventList == null) {
+            return result;
+        }
+        for (Event event : eventList) {
+            if (event.getPersonID().equals(personID)) {
+                result.add(event);
+            }
+        }
+        return result;
+    }
+
+    private Marker getAssociatedMarker(Event event, List<Marker> markers) {
+        if (event == null || markers == null) {
+            return null;
+        }
+        Marker result = null;
+        for (Marker marker : markers) {
+            Event markerEvent = (Event) marker.getTag();
+            assert markerEvent != null;
+            if (markerEvent.getEventID().equals(event.getEventID())) {
+                result = marker;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private void removeAllLines () {
+        // Spouse lines
+        if (spouseLine != null) {
+            spouseLine.remove();
+        }
+
+        // Family Tree lines
+        for (Polyline line : familyTreeLines) {
+            line.remove();
+        }
+        familyTreeLines = new ArrayList<>();
+
+        // Life Story lines
+        for (Polyline line : lifeStoryLines) {
+            line.remove();
+        }
+        lifeStoryLines = new ArrayList<>();
     }
 
     public void selectMarker(Event event) {
@@ -237,6 +445,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         assert event != null;
         setEventInfoView(event);
         marker.showInfoWindow();
+        drawLines();
     }
 
     @Override

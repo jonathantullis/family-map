@@ -1,15 +1,15 @@
 package client;
 
 public class Settings {
-    private boolean lifeStoryLines = false;
-    private boolean familyTreeLines = false;
-    private boolean spouseLines = false;
+    private boolean lifeStoryLines = true;
+    private boolean familyTreeLines = true;
+    private boolean spouseLines = true;
     private boolean fathersSide = true;
     private boolean mothersSide = true;
     private boolean maleEvents = true;
     private boolean femaleEvents = true;
 
-    public boolean isLifeStoryLines() {
+    public boolean showLifeStoryLines() {
         return lifeStoryLines;
     }
 
@@ -17,7 +17,7 @@ public class Settings {
         this.lifeStoryLines = lifeStoryLines;
     }
 
-    public boolean isFamilyTreeLines() {
+    public boolean showFamilyTreeLines() {
         return familyTreeLines;
     }
 
@@ -25,7 +25,7 @@ public class Settings {
         this.familyTreeLines = familyTreeLines;
     }
 
-    public boolean isSpouseLines() {
+    public boolean showSpouseLines() {
         return spouseLines;
     }
 
@@ -33,7 +33,7 @@ public class Settings {
         this.spouseLines = spouseLines;
     }
 
-    public boolean isFathersSide() {
+    public boolean showFathersSide() {
         return fathersSide;
     }
 
@@ -41,7 +41,7 @@ public class Settings {
         this.fathersSide = fathersSide;
     }
 
-    public boolean isMothersSide() {
+    public boolean showMothersSide() {
         return mothersSide;
     }
 
@@ -49,7 +49,7 @@ public class Settings {
         this.mothersSide = mothersSide;
     }
 
-    public boolean isMaleEvents() {
+    public boolean showMaleEvents() {
         return maleEvents;
     }
 
@@ -57,7 +57,7 @@ public class Settings {
         this.maleEvents = maleEvents;
     }
 
-    public boolean isFemaleEvents() {
+    public boolean showFemaleEvents() {
         return femaleEvents;
     }
 
