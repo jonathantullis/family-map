@@ -1,17 +1,17 @@
 # FamilyMap-Android
 
 An android app that displays family tree data on an interactive Google Map.
-Data can be generated randomly or loaded in manually in JSON format. The purpose
-of this project is to demonstrate a certain level of profficiency in full-stack development.
+Data is generated randomly or loaded manually in JSON format. The purpose
+of this project is to demonstrate a level of profficiency in full-stack development.
 
 <br>
 <i>DISCLAIMER: This project was completed as a part of a Computer Science course at Brigham Young University.
 The implementation is based on the provided specification and I do not claim any credit for the project material.</i>
-<br>
+<br><br>
 
 Begin by cloning this repository and opening up the project in Android Studio.
 
-<i>Specifications and sample data can be found in ./Getting_Started</i>
+Specifications for the project and sample data can be found in ./Getting_Started
 
 ## Server
 
@@ -44,4 +44,5 @@ web page in the browser.
 
 3. You must register as a user before you can log in. If you loaded the sample data outlined in the previous
 section, you can log in with those credentials now.
-4. After a successfull login, you have free run of the application! Enjoy!
+<br>
+After a successfull login, you have free run of the application! Enjoy!
