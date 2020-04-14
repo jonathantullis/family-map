@@ -1,4 +1,4 @@
-# FamilyMap-Android
+# Family Map
 
 An android app that displays family tree data on an interactive Google Map.
 Data is generated randomly or loaded manually in JSON format. The purpose
