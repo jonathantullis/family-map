@@ -9,9 +9,11 @@ of this project is to demonstrate a level of profficiency in full-stack developm
 The implementation is based on the provided specification and I do not claim any credit for the project material.</i>
 <br><br>
 
-Begin by cloning this repository and opening up the project in Android Studio.
-
 Specifications for the project and sample data can be found in ./Getting_Started
+
+## Pre-Requisites
+* Install [Android Studio](https://developer.android.com/studio/?gclid=CjwKCAjwvtX0BRAFEiwAGWJyZBN9KQx6_oF0RENjrMMa0yMxHRySpHMvjteQVWSlC34toDA5xPVVURoCxlkQAvD_BwE&gclsrc=aw.ds)
+* Download a [SQLite JDBC driver](https://bitbucket.org/xerial/sqlite-jdbc/downloads/) and add the JAR as a dependency in Android Studio.
 
 ## Server
 
