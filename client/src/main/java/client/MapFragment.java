@@ -47,14 +47,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private View view;
     private Person selectedPerson = null;
     private ArrayList<Marker> mapMarkers = new ArrayList<>();
-    private Event selectedEvent;
     private Marker selectedMarker;
     private Polyline spouseLine;
     private ArrayList<Polyline> familyTreeLines = new ArrayList<>();
     private ArrayList<Polyline> lifeStoryLines = new ArrayList<>();
 
     public MapFragment (Event selectedEvent) {
-        this.selectedEvent = selectedEvent;
+        dataCache.setSelectedEvent(selectedEvent);
     }
     public MapFragment () {}
 
@@ -79,6 +78,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         });
 
         filterEvents();
+        validateSelectedEvent();
 
         return view;
     }
@@ -97,9 +97,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             return true;
         });
 
-        if (selectedEvent != null) {
-            selectMarker(selectedEvent);
+        if (dataCache.selectedEvent() != null) {
+            selectMarker(dataCache.selectedEvent());
         }
+    }
+
+    // If it's not in the list of filtered events then it shouldn't be selected
+    private void validateSelectedEvent() {
+        if (dataCache.selectedEvent() != null) {
+            for (Event event : dataCache.allEventsFiltered()) {
+                if (event.getEventID().equals(dataCache.selectedEvent().getEventID())) {
+                    return;
+                }
+            }
+        }
+        dataCache.setSelectedEvent(null);
     }
 
     private void filterEvents() {
@@ -434,26 +446,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             assert markerEvent != null && event != null;
             if (markerEvent.getEventID().equals(event.getEventID())) {
                 selectMarker(marker);
-                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
             }
         }
     }
 
     private void selectMarker(Marker marker) {
         selectedMarker = marker;
-        Event event = (Event) marker.getTag();
-        assert event != null;
-        setEventInfoView(event);
+        dataCache.setSelectedEvent((Event) marker.getTag());
+        assert dataCache.selectedEvent() != null;
+        setEventInfoView(dataCache.selectedEvent());
         marker.showInfoWindow();
         drawLines();
+        map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
     }
 
     @Override
     public void onMapLoaded() {
-        // You probably don't need this callback. It occurs after onMapReady and I have seen
-        // cases where you get an error when adding markers or otherwise interacting with the map in
-        // onMapReady(...) because the map isn't really all the way ready. If you see that, just
-        // move all code where you interact with the map (everything after
-        // map.setOnMapLoadedCallback(...) above) to here.
     }
 }

@@ -14,6 +14,7 @@ public class DataCache {
     private String _authToken;
     private String _userName;
     private String _userPersonId;
+    private Event _selectedEvent;
     private ArrayList<Person> _allPersons = new ArrayList<>();
     private ArrayList<Event> _allEvents = new ArrayList<>();
     private ArrayList<Event> _allEventsFiltered = new ArrayList<>();
@@ -34,6 +35,7 @@ public class DataCache {
         this._authToken = null;
         this. _userName = null;
         this._userPersonId = null;
+        this._selectedEvent = null;
         this._allPersons = new ArrayList<>();
         this._allEvents = new ArrayList<>();
         this._allEventsFiltered = new ArrayList<>();
@@ -70,6 +72,14 @@ public class DataCache {
 
     public void setUserName(String userName) {
         this._userName = userName;
+    }
+
+    public Event selectedEvent() {
+        return _selectedEvent;
+    }
+
+    public void setSelectedEvent(Event _selectedEvent) {
+        this._selectedEvent = _selectedEvent;
     }
 
     public ArrayList<Event> allEvents() {
