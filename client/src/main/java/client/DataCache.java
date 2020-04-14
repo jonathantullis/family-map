@@ -99,7 +99,7 @@ public class DataCache {
         Collections.sort(this._allEventsFiltered, new YearComparator());
     }
 
-    public class YearComparator implements Comparator<Event> {
+    public static class YearComparator implements Comparator<Event> {
         @Override
         public int compare(Event o1, Event o2) {
             return o1.getYear().compareTo(o2.getYear());

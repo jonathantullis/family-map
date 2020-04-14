@@ -74,6 +74,8 @@ public class SettingsActivity extends AppCompatActivity {
     public void logout() {
         dataCache.invalidateData();
         Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 

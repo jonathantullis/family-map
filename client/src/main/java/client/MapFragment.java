@@ -41,7 +41,7 @@ import _model.Event;
 import _model.Person;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
-    private final float DEFAULT_LINE_WIDTH = 12;
+    private final float DEFAULT_LINE_WIDTH = 8;
     private DataCache dataCache = DataCache.getInstance();
     private GoogleMap map;
     private View view;
@@ -307,21 +307,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void drawLifeStoryLines() {
         ArrayList<Event> events = getAllEvents(selectedPerson.getPersonID(), dataCache.allEventsFiltered());
+        Collections.sort(events, new DataCache.YearComparator());
+        Marker lastEventMarker = null;
         for (Event event : events) {
             Marker eventMarker = getAssociatedMarker(event, mapMarkers);
-            if (eventMarker != null) {
-                Polyline line = map.addPolyline(new PolylineOptions()
-                        .add(eventMarker.getPosition(), selectedMarker.getPosition())
-                        .width(DEFAULT_LINE_WIDTH)
-                        .color(Color.rgb(28, 168, 138))
-                );
-                lifeStoryLines.add(line);
+            if (lastEventMarker != null) {
+                if (eventMarker != null) {
+                    Polyline line = map.addPolyline(new PolylineOptions()
+                            .add(eventMarker.getPosition(), lastEventMarker.getPosition())
+                            .width(DEFAULT_LINE_WIDTH)
+                            .color(Color.rgb(28, 168, 138))
+                    );
+                    lifeStoryLines.add(line);
+                }
             }
+            lastEventMarker = eventMarker;
         }
     }
 
     private void drawFamilyTreeLines() {
-        drawFamilyTreeLinesRecursive(selectedPerson, selectedMarker, DEFAULT_LINE_WIDTH);
+        drawFamilyTreeLinesRecursive(selectedPerson, selectedMarker, DEFAULT_LINE_WIDTH * 2);
     }
 
     private void drawFamilyTreeLinesRecursive(Person currentPerson, Marker currentMarker, float lineWidth) {
@@ -334,8 +339,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Marker motherEventMarker = getEarliestEventMarker(currentPerson.getMotherID(), mapMarkers);
         Marker fatherEventMarker = getEarliestEventMarker(currentPerson.getFatherID(), mapMarkers);
 
-        drawFamilyTreeLinesRecursive(mother, motherEventMarker, lineWidth * (float) 0.6);
-        drawFamilyTreeLinesRecursive(father, fatherEventMarker, lineWidth * (float) 0.6);
+        drawFamilyTreeLinesRecursive(mother, motherEventMarker, lineWidth / 2);
+        drawFamilyTreeLinesRecursive(father, fatherEventMarker, lineWidth / 2);
 
         // Draw lines and return
         if (motherEventMarker != null) {
