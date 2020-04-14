@@ -88,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
         searchImageView.setImageDrawable(new IconDrawable(this, FontAwesomeIcons.fa_search).
                 colorRes(R.color.light).sizeDp(25));
 
+        searchImageView.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        });
+
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowCustomEnabled(true);
     }
 
