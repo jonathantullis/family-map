@@ -13,7 +13,6 @@ Specifications for the project and sample data can be found in ./Getting_Started
 
 ## Pre-Requisites
 * Install [Android Studio](https://developer.android.com/studio/?gclid=CjwKCAjwvtX0BRAFEiwAGWJyZBN9KQx6_oF0RENjrMMa0yMxHRySpHMvjteQVWSlC34toDA5xPVVURoCxlkQAvD_BwE&gclsrc=aw.ds)
-* Download a [SQLite JDBC driver](https://bitbucket.org/xerial/sqlite-jdbc/downloads/) and add the JAR as a dependency in Android Studio.
 
 ## Server
 
