@@ -79,22 +79,7 @@ public class LoginFragment extends Fragment {
                     }
                 });
 
-//        autoRegister();
-        autoLogin();
-
         return view;
-    }
-
-    private void autoRegister() {
-        client = Proxy.getInstance("192.168.1.124", "8080");
-        RegisterRequest request = new RegisterRequest("jon", "pass", "jon@gmail.com", "Jonny", "Tullis", "m");
-        new RegisterAsync(this).execute(request);
-    }
-
-    private void autoLogin() {
-        client = Proxy.getInstance("192.168.1.124", "8080");
-        LoginRequest request = new LoginRequest("jon", "pass");
-        new LoginAsync(this).execute(request);
     }
 
     private void login() {
