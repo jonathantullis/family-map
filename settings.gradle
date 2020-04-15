@@ -1,4 +1,4 @@
-rootProject.name='FamilyMap'
+rootProject.name='family-map'
 include ':client'
 include ':shared'
 include ':server'
