@@ -10,7 +10,7 @@ import _request.AllPersonsRequest;
 import _request.RegisterRequest;
 import _result.RegisterResult;
 import client.DataCache;
-import client.HttpClient;
+import client.Proxy;
 
 public class RegisterAsync extends AsyncTask<RegisterRequest, Integer, RegisterResult> {
     private Fragment parentFragment;
@@ -21,7 +21,7 @@ public class RegisterAsync extends AsyncTask<RegisterRequest, Integer, RegisterR
 
     @Override
     protected RegisterResult doInBackground(RegisterRequest... registerRequests) {
-        HttpClient client = HttpClient.getInstance();
+        Proxy client = Proxy.getInstance();
         return client.register(registerRequests[0]);
     }
 

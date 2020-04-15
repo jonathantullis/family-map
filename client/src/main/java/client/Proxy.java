@@ -13,26 +13,26 @@ import java.net.URL;
 import _request.*;
 import _result.*;
 
-public class HttpClient {
+public class Proxy {
     private DataCache dataCache = DataCache.getInstance();
     private String serverHost;
     private String serverPort;
 
 
     /************  Singleton  **************/
-    private static HttpClient instance;
-    public static HttpClient getInstance(String serverHost, String serverPort) {
+    private static Proxy instance;
+    public static Proxy getInstance(String serverHost, String serverPort) {
         if (instance == null) {
-            instance = new HttpClient(serverHost, serverPort);
+            instance = new Proxy(serverHost, serverPort);
         }
         return instance;
     }
 
-    public static HttpClient getInstance() {
+    public static Proxy getInstance() {
         return instance;
     }
 
-    private HttpClient(String serverHost, String serverPort) {
+    private Proxy(String serverHost, String serverPort) {
         this.serverHost = serverHost;
         this.serverPort = serverPort;
     }
@@ -119,7 +119,7 @@ public class HttpClient {
 
             http.setRequestMethod("GET");
             http.setDoOutput(false);	// There is NO request body
-            http.addRequestProperty("Authorization", dataCache.authToken());
+            http.addRequestProperty("Authorization", allPersonsRequest.getAuthToken());
             http.addRequestProperty("Accept", "application/json"); // We want json
 
             http.connect();
@@ -148,7 +148,7 @@ public class HttpClient {
 
             http.setRequestMethod("GET");
             http.setDoOutput(false);	// There is NO request body
-            http.addRequestProperty("Authorization", dataCache.authToken());
+            http.addRequestProperty("Authorization", allEventsRequest.getAuthToken());
             http.addRequestProperty("Accept", "application/json"); // We want json
 
             http.connect();
@@ -169,6 +169,39 @@ public class HttpClient {
 
         // The response code indicated an error
         return new AllEventsResult("Error fetching all related events");
+    }
+
+    public ClearResult clear(ClearRequest clearRequest) {
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/clear");
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);	// There is a request body
+            http.addRequestProperty("Accept", "application/json"); // We want json
+
+            http.connect();
+
+            // Send request to server
+            Gson gson = new Gson();
+            String json = gson.toJson(clearRequest);
+            OutputStream reqBody = http.getOutputStream();
+            writeString(json, reqBody);
+
+            reqBody.close();
+
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream respBody = http.getInputStream();
+                json = readString(respBody);
+                // Save user data and authToken for current session
+                return gson.fromJson(json, ClearResult.class);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // The response code indicated an error
+        return new ClearResult(false, "Failed to clear database");
     }
 
     /*

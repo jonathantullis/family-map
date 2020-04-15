@@ -2,13 +2,10 @@ package client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import _model.Event;
 import _model.Person;
-import _result.AllEventsResult;
-import _result.AllPersonsResult;
-import model.EventItem;
+import model.Settings;
 
 public class DataCache {
     private String _authToken;
@@ -96,14 +93,7 @@ public class DataCache {
 
     public void setAllEventsFiltered(ArrayList<Event> allEventsFiltered) {
         this._allEventsFiltered = allEventsFiltered;
-        Collections.sort(this._allEventsFiltered, new YearComparator());
-    }
-
-    public static class YearComparator implements Comparator<Event> {
-        @Override
-        public int compare(Event o1, Event o2) {
-            return o1.getYear().compareTo(o2.getYear());
-        }
+        Collections.sort(this._allEventsFiltered, new Event.YearComparator());
     }
 
     public Settings settings() {

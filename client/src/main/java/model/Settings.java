@@ -1,4 +1,4 @@
-package client;
+package model;
 
 public class Settings {
     private boolean lifeStoryLines = true;

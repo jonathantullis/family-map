@@ -26,7 +26,7 @@ import async.RegisterAsync;
 
 public class LoginFragment extends Fragment {
     private View view;
-    private HttpClient client;
+    private Proxy client;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,11 +79,26 @@ public class LoginFragment extends Fragment {
                     }
                 });
 
+//        autoRegister();
+        autoLogin();
+
         return view;
     }
 
+    private void autoRegister() {
+        client = Proxy.getInstance("192.168.1.124", "8080");
+        RegisterRequest request = new RegisterRequest("jon", "pass", "jon@gmail.com", "Jonny", "Tullis", "m");
+        new RegisterAsync(this).execute(request);
+    }
+
+    private void autoLogin() {
+        client = Proxy.getInstance("192.168.1.124", "8080");
+        LoginRequest request = new LoginRequest("jon", "pass");
+        new LoginAsync(this).execute(request);
+    }
+
     private void login() {
-        client = HttpClient.getInstance(getServerHost(), getServerPort());
+        client = Proxy.getInstance(getServerHost(), getServerPort());
         LoginRequest request = getLoginRequest();
         new LoginAsync(this).execute(request);
     }
@@ -108,7 +123,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void register() {
-        client = HttpClient.getInstance(getServerHost(), getServerPort());
+        client = Proxy.getInstance(getServerHost(), getServerPort());
         RegisterRequest request = getRegisterRequest();
         new RegisterAsync(this).execute(request);
     }

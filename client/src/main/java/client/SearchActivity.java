@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +21,6 @@ import com.google.gson.Gson;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +28,7 @@ import _model.Event;
 import _model.Person;
 import model.EventItem;
 import model.PersonItem;
-import model.SettingsItem;
+import process.Search;
 
 
 public class SearchActivity extends AppCompatActivity {
@@ -73,61 +70,16 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchText = s.toString();
-                filterBySearch();
+                personItems.clear();
+                eventItems.clear();
+                Search.findPersonItems(searchText, personItems);
+                Search.findEventItems(searchText, eventItems);
                 adapter.notifyDataSetChanged();
             }
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
-    }
-
-    private void filterBySearch() {
-        System.out.println("Reached");
-        System.out.println("Text Value: " + searchText);
-
-        personItems.clear();
-        eventItems.clear();
-
-        if (searchText.length() > 0) {
-            for (Person person : dataCache.allPersons()) {
-                boolean containsSearchText = false;
-                if (person.getFirstName().toLowerCase().contains(searchText.toLowerCase())) {
-                    containsSearchText = true;
-                } else if (person.getLastName().toLowerCase().contains(searchText.toLowerCase())) {
-                    containsSearchText = true;
-                }
-
-                if (containsSearchText) {
-                    personItems.add(new PersonItem(person.getPersonID(), person.getFirstName() +
-                            " " + person.getLastName(), null, person.getGender()));
-                }
-            }
-
-        for (Event event : dataCache.allEventsFiltered()) {
-            boolean containsSearchText = false;
-            if (event.getCountry().toLowerCase().contains(searchText.toLowerCase())) {
-                containsSearchText = true;
-            } else if (event.getCity().toLowerCase().contains(searchText.toLowerCase())) {
-                containsSearchText = true;
-            } else if (event.getEventType().toLowerCase().contains(searchText.toLowerCase())) {
-                containsSearchText = true;
-            } else if (event.getYear().toString().toLowerCase().contains(searchText.toLowerCase())) {
-                containsSearchText = true;
-            }
-
-            if (containsSearchText) {
-                String personName = null;
-                for (Person person : dataCache.allPersons()) {
-                    if (event.getPersonID().equals(person.getPersonID())) {
-                        personName = person.getFirstName() + " " + person.getLastName();
-                    }
-                }
-                eventItems.add(new EventItem(event.getEventID(), event.getEventType(), event.getCity(),
-                        event.getCountry(), event.getYear().toString(), personName));
-            }
-            }
-        }
     }
 
     @Override

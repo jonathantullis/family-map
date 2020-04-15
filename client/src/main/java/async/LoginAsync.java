@@ -10,7 +10,7 @@ import _request.AllPersonsRequest;
 import _request.LoginRequest;
 import _result.LoginResult;
 import client.DataCache;
-import client.HttpClient;
+import client.Proxy;
 
 public class LoginAsync extends AsyncTask<LoginRequest, Integer, LoginResult> {
     private Fragment parentFragment;
@@ -21,7 +21,7 @@ public class LoginAsync extends AsyncTask<LoginRequest, Integer, LoginResult> {
 
     @Override
     protected LoginResult doInBackground(LoginRequest... loginRequests) {
-        HttpClient client = HttpClient.getInstance();
+        Proxy client = Proxy.getInstance();
         return client.login(loginRequests[0]);
     }
 

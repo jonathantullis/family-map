@@ -1,5 +1,7 @@
 package _model;
 
+import java.util.Comparator;
+
 public class Event {
     /**
      * event ID
@@ -73,6 +75,13 @@ public class Event {
                 a.getCity().equals(b.getCity()) &&
                 a.getEventType().equals(b.getEventType()) &&
                 a.getClass().equals(b.getClass());
+    }
+
+    public static class YearComparator implements Comparator<Event> {
+        @Override
+        public int compare(Event o1, Event o2) {
+            return o1.getYear().compareTo(o2.getYear());
+        }
     }
 
     public String getEventID() {

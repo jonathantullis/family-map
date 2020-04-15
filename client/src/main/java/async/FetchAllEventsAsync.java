@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment;
 
 import _request.AllEventsRequest;
 import _result.AllEventsResult;
-import client.HttpClient;
+import client.Proxy;
 
 public class FetchAllEventsAsync extends AsyncTask<AllEventsRequest, Integer, AllEventsResult> {
     private Fragment parentFragment;
@@ -17,7 +17,7 @@ public class FetchAllEventsAsync extends AsyncTask<AllEventsRequest, Integer, Al
 
     @Override
     protected AllEventsResult doInBackground(AllEventsRequest... requests) {
-        HttpClient client = HttpClient.getInstance();
+        Proxy client = Proxy.getInstance();
         return client.fetchAllEvents(requests[0]);
     }
 

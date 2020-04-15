@@ -39,6 +39,8 @@ import java.util.List;
 
 import _model.Event;
 import _model.Person;
+import process.Data;
+import process.Filter;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
     private final float DEFAULT_LINE_WIDTH = 8;
@@ -77,7 +79,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             startActivity(intent);
         });
 
-        filterEvents();
+        Filter.filterEventsBasedOnSettings();
         validateSelectedEvent();
 
         return view;
@@ -112,79 +114,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
         }
         dataCache.setSelectedEvent(null);
-    }
-
-    private void filterEvents() {
-        ArrayList<Event> filteredEvents = new ArrayList<>();
-        // Filter by side of family
-        Person user = getPerson(dataCache.userPersonId(), dataCache.allPersons());
-        if (dataCache.settings().showFathersSide() && dataCache.settings().showMothersSide()) {
-            filteredEvents = dataCache.allEvents();
-        } else {
-            if (dataCache.settings().showFathersSide()) {
-                // Add father's side only
-                Person father = getPerson(user.getFatherID(), dataCache.allPersons());
-                ArrayList<Person> fathersSide = getPersonsRecursive(father);
-
-                for (Person person : fathersSide) {
-                    ArrayList<Event> events = getAllEvents(person.getPersonID(), dataCache.allEvents());
-                    filteredEvents.addAll(events);
-                }
-            } else if (dataCache.settings().showMothersSide()) {
-                // Add mother's side only
-                Person mother = getPerson(user.getMotherID(), dataCache.allPersons());
-                ArrayList<Person> mothersSide = getPersonsRecursive(mother);
-
-                for (Person person : mothersSide) {
-                    ArrayList<Event> events = getAllEvents(person.getPersonID(), dataCache.allEvents());
-                    filteredEvents.addAll(events);
-                }
-            }
-            // Add the root user and spouse events
-            filteredEvents.addAll(getAllEvents(user.getPersonID(), dataCache.allEvents()));
-            filteredEvents.addAll(getAllEvents(user.getSpouseID(), dataCache.allEvents()));
-        }
-
-        // Filter by gender
-        if (!(dataCache.settings().showMaleEvents() && dataCache.settings().showFemaleEvents())) {
-            String gender = null;
-            if (dataCache.settings().showMaleEvents()) {
-                gender = "m";
-            } else if (dataCache.settings().showFemaleEvents()) {
-                gender = "f";
-            }
-
-            ArrayList<Event> filteredByGender = new ArrayList<>();
-            if (gender != null) {
-                for (Event event : filteredEvents) {
-                    Person person = getPerson(event.getPersonID(), dataCache.allPersons());
-                    assert person != null;
-                    if (person.getGender().toLowerCase().equals(gender)) {
-                        filteredByGender.add(event);
-                    }
-                }
-            }
-            filteredEvents = filteredByGender;
-        }
-        // Else no need to filter by gender
-
-        dataCache.setAllEventsFiltered(filteredEvents);
-    }
-
-    private ArrayList<Person> getPersonsRecursive(Person root) {
-        ArrayList<Person> list = new ArrayList<>();
-        if (root == null) {
-            return list;
-        }
-        list.add(root);
-
-        Person father = getPerson(root.getFatherID(), dataCache.allPersons());
-        Person mother = getPerson(root.getMotherID(), dataCache.allPersons());
-
-        list.addAll(getPersonsRecursive(father));
-        list.addAll(getPersonsRecursive(mother));
-
-        return list;
     }
 
     private void setDefaultInfoView() {
@@ -289,7 +218,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void drawSpouseLines(String spouseID) {
         // Find the selected person's spouse
-        Person spouse = getPerson(spouseID, dataCache.allPersons());
+        Person spouse = Data.getPerson(spouseID, dataCache.allPersons());
         if (spouse != null) {
             // Find the marker for the EARLIEST event of the spouse
             Marker earliestEventMarker = getEarliestEventMarker(spouse.getPersonID(), mapMarkers);
@@ -306,8 +235,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void drawLifeStoryLines() {
-        ArrayList<Event> events = getAllEvents(selectedPerson.getPersonID(), dataCache.allEventsFiltered());
-        Collections.sort(events, new DataCache.YearComparator());
+        ArrayList<Event> events = Data.getAllEvents(selectedPerson.getPersonID(), dataCache.allEventsFiltered());
+        Collections.sort(events, new Event.YearComparator());
         Marker lastEventMarker = null;
         for (Event event : events) {
             Marker eventMarker = getAssociatedMarker(event, mapMarkers);
@@ -334,8 +263,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             return;
         }
 
-        Person mother = getPerson(currentPerson.getMotherID(), dataCache.allPersons());
-        Person father = getPerson(currentPerson.getFatherID(), dataCache.allPersons());
+        Person mother = Data.getPerson(currentPerson.getMotherID(), dataCache.allPersons());
+        Person father = Data.getPerson(currentPerson.getFatherID(), dataCache.allPersons());
         Marker motherEventMarker = getEarliestEventMarker(currentPerson.getMotherID(), mapMarkers);
         Marker fatherEventMarker = getEarliestEventMarker(currentPerson.getFatherID(), mapMarkers);
 
@@ -382,32 +311,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
         }
         return earliestMarker;
-    }
-
-    private Person getPerson(String personID, List<Person> personList) {
-        if (personID == null) {
-            return null;
-        }
-        Person result = null;
-        for (Person person : personList) {
-            if (person.getPersonID().equals(personID)) {
-                result = person;
-            }
-        }
-        return result;
-    }
-
-    private ArrayList<Event> getAllEvents(String personID, List<Event> eventList) {
-        ArrayList<Event> result = new ArrayList<>();
-        if (personID == null || eventList == null) {
-            return result;
-        }
-        for (Event event : eventList) {
-            if (event.getPersonID().equals(personID)) {
-                result.add(event);
-            }
-        }
-        return result;
     }
 
     private Marker getAssociatedMarker(Event event, List<Marker> markers) {

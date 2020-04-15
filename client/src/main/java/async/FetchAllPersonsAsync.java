@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment;
 
 import _request.AllPersonsRequest;
 import _result.AllPersonsResult;
-import client.HttpClient;
+import client.Proxy;
 import client.MainActivity;
 
 public class FetchAllPersonsAsync extends AsyncTask<AllPersonsRequest, Integer, AllPersonsResult> {
@@ -18,7 +18,7 @@ public class FetchAllPersonsAsync extends AsyncTask<AllPersonsRequest, Integer, 
 
     @Override
     protected AllPersonsResult doInBackground(AllPersonsRequest... requests) {
-        HttpClient client = HttpClient.getInstance();
+        Proxy client = Proxy.getInstance();
         return client.fetchAllPersons(requests[0]);
     }
 
