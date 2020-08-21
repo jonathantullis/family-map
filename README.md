@@ -2,7 +2,7 @@
 
 An android app that displays family tree data on an interactive Google Map.
 Data is generated randomly or loaded manually in JSON format. The purpose
-of this project is to demonstrate a level of profficiency in full-stack development.
+of this project is to demonstrate profficiency in full-stack development.
 
 <br>
 <i>DISCLAIMER: This project was completed as a part of a Computer Science course at Brigham Young University.
